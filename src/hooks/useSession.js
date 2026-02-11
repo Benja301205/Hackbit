@@ -15,7 +15,7 @@ export function useSession() {
 
     const { data } = await supabase
       .from('users')
-      .select('*, groups(*)')
+      .select('*, groups!group_id(*)')
       .eq('session_token', token)
 
     if (!data || data.length === 0) {
