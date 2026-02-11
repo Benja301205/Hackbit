@@ -15,6 +15,7 @@ export function useSession() {
 
     const { data } = await supabase
       .from('users')
+      // Explicit relationship to avoid PGRST201
       .select('*, groups!group_id(*)')
       .eq('session_token', token)
 
