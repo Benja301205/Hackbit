@@ -83,7 +83,7 @@ export default function CompletarHabito() {
           habit_id: habito.id,
           user_id: user.id,
           photo_url: urlData.publicUrl,
-          status: 'pending',
+          status: 'approved',
           date: hoy,
         })
 
@@ -183,7 +183,7 @@ export default function CompletarHabito() {
           ref={fileInputRef}
           type="file"
           accept="image/*"
-          capture="environment"
+
           onChange={handleFileChange}
           className="hidden"
         />
@@ -195,7 +195,7 @@ export default function CompletarHabito() {
               disabled={enviando}
               className="w-full py-4 bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-lg font-semibold rounded-2xl shadow-sm transition-colors"
             >
-              {enviando ? 'Enviando...' : 'Enviar para validación'}
+              {enviando ? 'Subiendo...' : 'Completar hábito'}
             </button>
             <button
               onClick={() => fileInputRef.current?.click()}

@@ -6,7 +6,8 @@ export function useDashboard(user) {
   const [ranking, setRanking] = useState([])
   const [habitos, setHabitos] = useState([])
   const [misCompletions, setMisCompletions] = useState({})
-  const [pendientesValidar, setPendientesValidar] = useState(0)
+  const [disputasPendientes, setDisputasPendientes] = useState(0)
+  const [actividadReciente, setActividadReciente] = useState([])
   const [rondaActiva, setRondaActiva] = useState(null)
   const [diasRestantes, setDiasRestantes] = useState(0)
   const [loading, setLoading] = useState(true)
@@ -90,7 +91,6 @@ export function useDashboard(user) {
 
     const completionMap = {}
     ;(misCompHoy || []).forEach((c) => {
-      // Si hay varias (rechazado + nuevo intento), priorizar no-rejected
       const existente = completionMap[c.habit_id]
       if (!existente || existente.status === 'rejected') {
         completionMap[c.habit_id] = c
@@ -98,18 +98,37 @@ export function useDashboard(user) {
     })
     setMisCompletions(completionMap)
 
-    // Validaciones pendientes (de otros usuarios, en mi grupo)
-    const otrosUsuarios = usuarios.filter((u) => u.id !== user.id).map((u) => u.id)
-    if (otrosUsuarios.length > 0) {
-      const { count } = await supabase
-        .from('completions')
-        .select('*', { count: 'exact', head: true })
-        .eq('status', 'pending')
-        .in('user_id', otrosUsuarios)
+    // Disputas pendientes (donde el usuario necesita defenderse)
+    const { data: misCompletionsIds } = await supabase
+      .from('completions')
+      .select('id')
+      .eq('user_id', user.id)
 
-      setPendientesValidar(count || 0)
+    if (misCompletionsIds && misCompletionsIds.length > 0) {
+      const { count } = await supabase
+        .from('disputes')
+        .select('*', { count: 'exact', head: true })
+        .in('completion_id', misCompletionsIds.map(c => c.id))
+        .is('resolution', null)
+        .is('defense_text', null)
+
+      setDisputasPendientes(count || 0)
     } else {
-      setPendientesValidar(0)
+      setDisputasPendientes(0)
+    }
+
+    // Actividad reciente del grupo (últimas 20 completions)
+    const userIds = usuarios.map((u) => u.id)
+    if (userIds.length > 0) {
+      const { data: actividad } = await supabase
+        .from('completions')
+        .select('*, habits(name, level), users(nickname)')
+        .in('user_id', userIds)
+        .in('status', ['approved', 'disputed'])
+        .order('created_at', { ascending: false })
+        .limit(20)
+
+      setActividadReciente(actividad || [])
     }
 
     setLoading(false)
@@ -123,7 +142,8 @@ export function useDashboard(user) {
     ranking,
     habitos,
     misCompletions,
-    pendientesValidar,
+    disputasPendientes,
+    actividadReciente,
     rondaActiva,
     diasRestantes,
     loading,

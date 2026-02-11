@@ -12,6 +12,9 @@ export default function InfoGrupo() {
   const [miembros, setMiembros] = useState([])
   const [loading, setLoading] = useState(true)
   const [copiado, setCopiado] = useState(false)
+  const [modalEliminar, setModalEliminar] = useState(false)
+  const [modalSalir, setModalSalir] = useState(false)
+  const [procesando, setProcesando] = useState(false)
 
   useEffect(() => {
     if (!loadingSession && !user) {
@@ -65,6 +68,74 @@ export default function InfoGrupo() {
     }
   }
 
+  const borrarFotosGrupo = async (groupId) => {
+    // Listar usuarios para encontrar sub-carpetas
+    const { data: usuarios } = await supabase
+      .from('users')
+      .select('id')
+      .eq('group_id', groupId)
+
+    for (const u of (usuarios || [])) {
+      const { data: files } = await supabase.storage
+        .from('habit-photos')
+        .list(`${groupId}/${u.id}`)
+      if (files?.length) {
+        const paths = files.map(f => `${groupId}/${u.id}/${f.name}`)
+        await supabase.storage.from('habit-photos').remove(paths)
+      }
+    }
+  }
+
+  const handleEliminarGrupo = async () => {
+    setProcesando(true)
+    try {
+      await borrarFotosGrupo(user.group_id)
+      await supabase.from('groups').delete().eq('id', user.group_id)
+      localStorage.removeItem('active_group_id')
+      navigate('/', { replace: true })
+    } catch {
+      setProcesando(false)
+    }
+  }
+
+  const handleSalirGrupo = async () => {
+    setProcesando(true)
+    try {
+      const grupo = user.groups
+
+      // Si es el creador, transferir propiedad
+      if (user.id === grupo.created_by) {
+        const { data: otrosUsuarios } = await supabase
+          .from('users')
+          .select('id')
+          .eq('group_id', user.group_id)
+          .neq('id', user.id)
+          .order('created_at', { ascending: true })
+          .limit(1)
+
+        if (otrosUsuarios?.length > 0) {
+          await supabase.from('groups')
+            .update({ created_by: otrosUsuarios[0].id })
+            .eq('id', user.group_id)
+        } else {
+          // Último usuario → eliminar grupo completo
+          await borrarFotosGrupo(user.group_id)
+          await supabase.from('groups').delete().eq('id', user.group_id)
+          localStorage.removeItem('active_group_id')
+          navigate('/', { replace: true })
+          return
+        }
+      }
+
+      // Eliminar registro del usuario de este grupo
+      await supabase.from('users').delete().eq('id', user.id)
+      localStorage.removeItem('active_group_id')
+      navigate('/', { replace: true })
+    } catch {
+      setProcesando(false)
+    }
+  }
+
   if (loadingSession || loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -75,6 +146,7 @@ export default function InfoGrupo() {
 
   if (!user) return null
   const grupo = user.groups
+  const esCreador = user.id === grupo.created_by
 
   return (
     <div className="min-h-screen pb-20">
@@ -112,9 +184,19 @@ export default function InfoGrupo() {
 
         {/* Hábitos */}
         <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
-          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">
-            Hábitos
-          </h2>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+              Hábitos
+            </h2>
+            {esCreador && (
+              <button
+                onClick={() => navigate('/editar-grupo')}
+                className="text-emerald-600 text-sm font-medium"
+              >
+                Editar
+              </button>
+            )}
+          </div>
           <div className="space-y-2">
             {habitos.map((h) => (
               <div
@@ -173,7 +255,82 @@ export default function InfoGrupo() {
             ))}
           </div>
         </section>
+
+        {/* Acciones */}
+        <section className="space-y-3 pb-4">
+          <button
+            onClick={() => setModalSalir(true)}
+            className="w-full py-3 bg-white border-2 border-gray-200 hover:border-gray-300 text-gray-600 font-medium rounded-2xl transition-colors text-sm"
+          >
+            Salir del grupo
+          </button>
+          {esCreador && (
+            <button
+              onClick={() => setModalEliminar(true)}
+              className="w-full py-3 bg-red-50 hover:bg-red-100 border-2 border-red-200 text-red-600 font-medium rounded-2xl transition-colors text-sm"
+            >
+              Eliminar grupo
+            </button>
+          )}
+        </section>
       </div>
+
+      {/* Modal eliminar grupo */}
+      {modalEliminar && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-6">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-sm">
+            <h3 className="text-lg font-bold mb-2">Eliminar grupo</h3>
+            <p className="text-gray-500 text-sm mb-6">
+              ¿Estás seguro? Se perderán todos los datos del grupo, incluyendo hábitos, fotos y ranking.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setModalEliminar(false)}
+                disabled={procesando}
+                className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium rounded-xl transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleEliminarGrupo}
+                disabled={procesando}
+                className="flex-1 py-3 bg-red-500 hover:bg-red-600 disabled:bg-gray-300 text-white font-medium rounded-xl transition-colors"
+              >
+                {procesando ? 'Eliminando...' : 'Eliminar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal salir del grupo */}
+      {modalSalir && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-6">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-sm">
+            <h3 className="text-lg font-bold mb-2">Salir del grupo</h3>
+            <p className="text-gray-500 text-sm mb-6">
+              ¿Estás seguro que querés salir del grupo?
+              {esCreador && ' Como sos el creador, la propiedad se transferirá a otro miembro.'}
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setModalSalir(false)}
+                disabled={procesando}
+                className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium rounded-xl transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleSalirGrupo}
+                disabled={procesando}
+                className="flex-1 py-3 bg-red-500 hover:bg-red-600 disabled:bg-gray-300 text-white font-medium rounded-xl transition-colors"
+              >
+                {procesando ? 'Saliendo...' : 'Salir'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <BottomNav />
     </div>

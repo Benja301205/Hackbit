@@ -6,7 +6,9 @@ import Dashboard from './pages/Dashboard.jsx'
 import TablaAnual from './pages/TablaAnual.jsx'
 import InfoGrupo from './pages/InfoGrupo.jsx'
 import CompletarHabito from './pages/CompletarHabito.jsx'
-import ValidarHabitos from './pages/ValidarHabitos.jsx'
+import Actividad from './pages/Actividad.jsx'
+import Disputa from './pages/Disputa.jsx'
+import EditarGrupo from './pages/EditarGrupo.jsx'
 
 function App() {
   const location = useLocation()
@@ -22,7 +24,9 @@ function App() {
           <Route path="/tabla-anual" element={<TablaAnual />} />
           <Route path="/grupo" element={<InfoGrupo />} />
           <Route path="/completar/:habitoId" element={<CompletarHabito />} />
-          <Route path="/validar" element={<ValidarHabitos />} />
+          <Route path="/actividad" element={<Actividad />} />
+          <Route path="/disputa/:disputaId" element={<Disputa />} />
+          <Route path="/editar-grupo" element={<EditarGrupo />} />
         </Routes>
       </div>
     </div>

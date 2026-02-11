@@ -12,11 +12,13 @@ function StatusBadge({ status }) {
     pending: 'bg-gray-100 text-gray-500',
     approved: 'bg-emerald-100 text-emerald-700',
     rejected: 'bg-red-100 text-red-600',
+    disputed: 'bg-amber-100 text-amber-700',
   }
   const textos = {
-    pending: 'Esperando validación',
-    approved: 'Aprobado ✓',
+    pending: 'Pendiente',
+    approved: 'Completado ✓',
     rejected: 'Rechazado ✗',
+    disputed: 'Objetado ⚠',
   }
   return (
     <span className={`text-xs font-medium px-2 py-1 rounded-full ${estilos[status]}`}>
@@ -27,13 +29,14 @@ function StatusBadge({ status }) {
 
 export default function Dashboard() {
   const navigate = useNavigate()
-  const { user, loading: loadingSession } = useSession()
+  const { user, userProfiles, loading: loadingSession, switchGroup } = useSession()
   const { finDeRonda, checking, cerrarModal } = useRoundCheck(user)
   const {
     ranking,
     habitos,
     misCompletions,
-    pendientesValidar,
+    disputasPendientes,
+    actividadReciente,
     rondaActiva,
     diasRestantes,
     loading: loadingDash,
@@ -74,6 +77,19 @@ export default function Dashboard() {
       <div className="bg-emerald-500 text-white px-6 pt-8 pb-6">
         <p className="text-emerald-100 text-sm">Hola, {user.nickname}</p>
         <h1 className="text-xl font-bold">{user.groups?.name || 'Mi grupo'}</h1>
+        {userProfiles.length > 1 && (
+          <select
+            value={user.group_id}
+            onChange={(e) => switchGroup(e.target.value)}
+            className="mt-2 w-full bg-emerald-600 text-white text-sm rounded-lg px-3 py-2 border border-emerald-400 focus:outline-none"
+          >
+            {userProfiles.map((p) => (
+              <option key={p.group_id} value={p.group_id}>
+                {p.groups?.name || 'Grupo'}
+              </option>
+            ))}
+          </select>
+        )}
       </div>
 
       <div className="px-4 -mt-3 space-y-4">
@@ -187,32 +203,70 @@ export default function Dashboard() {
         </section>
 
         {/* ============================
-            Validaciones pendientes
+            Disputas pendientes
         ============================ */}
-        <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
-                Validaciones pendientes
-              </h2>
-              <p className="text-gray-400 text-sm mt-0.5">
-                {pendientesValidar === 0
-                  ? 'No hay fotos para validar'
-                  : `${pendientesValidar} foto${pendientesValidar !== 1 ? 's' : ''} por validar`}
-              </p>
-            </div>
-            {pendientesValidar > 0 && (
+        {disputasPendientes > 0 && (
+          <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+                  Disputas pendientes
+                </h2>
+                <p className="text-gray-400 text-sm mt-0.5">
+                  {disputasPendientes} objeción{disputasPendientes !== 1 ? 'es' : ''} por responder
+                </p>
+              </div>
               <button
-                onClick={() => navigate('/validar')}
+                onClick={() => navigate('/actividad')}
                 className="relative px-4 py-2.5 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-white text-sm font-medium rounded-lg transition-colors"
               >
-                Validar
+                Ver
                 <span className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
-                  {pendientesValidar}
+                  {disputasPendientes}
                 </span>
               </button>
-            )}
+            </div>
+          </section>
+        )}
+
+        {/* ============================
+            Actividad reciente
+        ============================ */}
+        <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+              Actividad reciente
+            </h2>
+            <button
+              onClick={() => navigate('/actividad')}
+              className="text-emerald-600 text-sm font-medium"
+            >
+              Ver todo
+            </button>
           </div>
+          {actividadReciente.length === 0 ? (
+            <p className="text-gray-400 text-sm py-2">No hay actividad reciente</p>
+          ) : (
+            <div className="space-y-2">
+              {actividadReciente.slice(0, 5).map((c) => (
+                <div key={c.id} className="flex items-center gap-3 bg-gray-50 rounded-xl p-2.5">
+                  <img
+                    src={c.photo_url}
+                    alt=""
+                    className="w-10 h-10 rounded-lg object-cover shrink-0"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">
+                      {c.users?.nickname} — {c.habits?.name}
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      {PUNTOS_POR_NIVEL[c.habits?.level]}pts · {new Date(c.created_at).toLocaleDateString('es-AR')}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
       </div>
 

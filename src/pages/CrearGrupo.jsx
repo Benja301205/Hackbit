@@ -72,8 +72,9 @@ export default function CrearGrupo() {
 
       if (errorGrupo) throw errorGrupo
 
-      // 2. Crear usuario con session_token
-      const sessionToken = crypto.randomUUID()
+      // 2. Crear usuario con session_token (reutilizar si existe)
+      const existingToken = localStorage.getItem('session_token')
+      const sessionToken = existingToken || crypto.randomUUID()
       const { data: usuario, error: errorUsuario } = await supabase
         .from('users')
         .insert({
@@ -85,6 +86,9 @@ export default function CrearGrupo() {
         .single()
 
       if (errorUsuario) throw errorUsuario
+
+      // Actualizar created_by del grupo
+      await supabase.from('groups').update({ created_by: usuario.id }).eq('id', grupo.id)
 
       // 3. Crear hábitos
       const { error: errorHabitos } = await supabase
@@ -114,6 +118,7 @@ export default function CrearGrupo() {
 
       // 5. Guardar sesión
       localStorage.setItem('session_token', sessionToken)
+      localStorage.setItem('active_group_id', grupo.id)
 
       setGrupoCreado({ ...grupo, inviteCode })
     } catch (err) {

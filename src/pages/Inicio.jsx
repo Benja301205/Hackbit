@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSession } from '../hooks/useSession'
 
@@ -7,12 +7,6 @@ export default function Inicio() {
   const { user, loading } = useSession()
   const [codigoVisible, setCodigoVisible] = useState(false)
   const [codigo, setCodigo] = useState('')
-
-  useEffect(() => {
-    if (!loading && user) {
-      navigate('/dashboard', { replace: true })
-    }
-  }, [loading, user, navigate])
 
   const handleUnirse = () => {
     if (codigoVisible) {
@@ -78,6 +72,15 @@ export default function Inicio() {
           >
             Unirme a un grupo
           </button>
+
+          {user && (
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="w-full py-4 bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-700 text-lg font-semibold rounded-2xl transition-colors"
+            >
+              Ir al Dashboard
+            </button>
+          )}
         </div>
       </div>
     </div>

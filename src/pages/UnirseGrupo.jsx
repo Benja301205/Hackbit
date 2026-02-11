@@ -15,13 +15,6 @@ export default function UnirseGrupo() {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    // Si ya tiene sesión, ir al dashboard
-    const token = localStorage.getItem('session_token')
-    if (token) {
-      navigate('/dashboard', { replace: true })
-      return
-    }
-
     cargarGrupo()
   }, [codigo])
 
@@ -59,7 +52,8 @@ export default function UnirseGrupo() {
     setError(null)
 
     try {
-      const sessionToken = crypto.randomUUID()
+      const existingToken = localStorage.getItem('session_token')
+      const sessionToken = existingToken || crypto.randomUUID()
 
       const { error: err } = await supabase
         .from('users')
@@ -72,6 +66,7 @@ export default function UnirseGrupo() {
       if (err) throw err
 
       localStorage.setItem('session_token', sessionToken)
+      localStorage.setItem('active_group_id', grupo.id)
       navigate('/dashboard', { replace: true })
     } catch (err) {
       setError(err.message || 'Error al unirse al grupo')
