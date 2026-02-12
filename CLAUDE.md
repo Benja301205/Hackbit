@@ -25,13 +25,13 @@ App de competencia de hábitos entre amigos. Todo en español. Mobile-first (375
 ```
 src/
   components/   → BottomNav (nav inferior), FinDeRondaModal
-  pages/        → Inicio, CrearGrupo, UnirseGrupo, Dashboard, CompletarHabito, ValidarHabitos, TablaAnual, InfoGrupo
+  pages/        → Inicio, CrearGrupo, UnirseGrupo, Dashboard, CompletarHabito, ValidarHabitos, TablaAnual, InfoGrupo, Actividad, Disputa, EditarGrupo
   lib/          → supabase.js (cliente), utils.js (fechas, puntos, códigos), image.js (compresión)
   hooks/        → useSession (auth por token), useDashboard (datos del dashboard), useRoundCheck (cierre automático de rondas)
   App.jsx       → Router principal (Routes)
   main.jsx      → Entry point (BrowserRouter + StrictMode)
 supabase/
-  migrations/   → 001_create_tables, 002_rls_policies, 003_storage_bucket
+  migrations/   → 001_create_tables, 002_rls_policies, 003_storage_bucket, 004_multi_group, 005_disputes, 006_fix_completion_status_check
 ```
 
 ### Flujo principal

@@ -14,6 +14,7 @@ export default function Disputa() {
   const [loading, setLoading] = useState(true)
   const [defensa, setDefensa] = useState('')
   const [enviando, setEnviando] = useState(false)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     if (!loadingSession && !user) {
@@ -24,11 +25,13 @@ export default function Disputa() {
   }, [loadingSession, user])
 
   const cargarDisputa = async () => {
-    const { data: d } = await supabase
+    const { data: d, error: errorDisputa } = await supabase
       .from('disputes')
-      .select('*, users!disputes_disputed_by_fkey(nickname)')
+      .select('*, users!disputed_by(nickname)')
       .eq('id', disputaId)
       .single()
+
+    if (errorDisputa) console.error('Error fetching dispute:', errorDisputa)
 
     if (!d) {
       setLoading(false)
@@ -39,7 +42,7 @@ export default function Disputa() {
 
     const { data: c } = await supabase
       .from('completions')
-      .select('*, habits(name, level), users(nickname)')
+      .select('*, habits(name, level), users!user_id(nickname)')
       .eq('id', d.completion_id)
       .single()
 
@@ -50,13 +53,17 @@ export default function Disputa() {
   const enviarDefensa = async () => {
     if (!defensa.trim()) return
     setEnviando(true)
+    setError(null)
 
-    const { error } = await supabase
+    const { error: err } = await supabase
       .from('disputes')
       .update({ defense_text: defensa.trim() })
       .eq('id', disputaId)
 
-    if (!error) {
+    if (err) {
+      setError('No se pudo enviar la defensa. Intentá de nuevo.')
+      console.error('Error enviando defensa:', err)
+    } else {
       setDisputa((prev) => ({ ...prev, defense_text: defensa.trim() }))
     }
     setEnviando(false)
@@ -64,13 +71,14 @@ export default function Disputa() {
 
   const resolver = async (resolution) => {
     setEnviando(true)
+    setError(null)
 
-    const { error } = await supabase
+    const { error: err } = await supabase
       .from('disputes')
       .update({ resolution, resolved_at: new Date().toISOString() })
       .eq('id', disputaId)
 
-    if (!error) {
+    if (!err) {
       if (resolution === 'rejected') {
         // Rechazar la completion (se restan puntos)
         await supabase
@@ -85,6 +93,9 @@ export default function Disputa() {
           .eq('id', disputa.completion_id)
       }
       setDisputa((prev) => ({ ...prev, resolution, resolved_at: new Date().toISOString() }))
+    } else {
+      setError('No se pudo resolver la disputa. Intentá de nuevo.')
+      console.error('Error resolviendo disputa:', err)
     }
     setEnviando(false)
   }
@@ -114,6 +125,17 @@ export default function Disputa() {
   const esObjetante = disputa.disputed_by === user.id
   const esAcusado = completion.user_id === user.id
   const resuelta = !!disputa.resolution
+
+  console.log('DEBUG DISPUTA:', {
+    disputaId,
+    userId: user.id,
+    disputa_disputed_by: disputa.disputed_by,
+    completion_user_id: completion.user_id,
+    esObjetante,
+    esAcusado,
+    resuelta,
+    disputa_defensa: disputa.defense_text
+  })
 
   return (
     <div className="min-h-screen px-6 py-8">
@@ -178,6 +200,9 @@ export default function Disputa() {
             >
               {enviando ? 'Enviando...' : 'Enviar defensa'}
             </button>
+            {error && (
+              <p className="text-red-500 text-sm text-center mt-2">{error}</p>
+            )}
           </div>
         ) : !resuelta ? (
           <div className="bg-gray-50 rounded-2xl p-4 mb-4">
@@ -187,9 +212,8 @@ export default function Disputa() {
 
         {/* Paso 3: Resolución */}
         {resuelta ? (
-          <div className={`rounded-2xl p-4 mb-4 ${
-            disputa.resolution === 'accepted' ? 'bg-emerald-50' : 'bg-red-50'
-          }`}>
+          <div className={`rounded-2xl p-4 mb-4 ${disputa.resolution === 'accepted' ? 'bg-emerald-50' : 'bg-red-50'
+            }`}>
             <p className="text-xs uppercase tracking-wide font-semibold mb-1" style={{
               color: disputa.resolution === 'accepted' ? '#047857' : '#dc2626'
             }}>
