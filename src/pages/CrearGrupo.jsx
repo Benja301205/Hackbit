@@ -156,33 +156,36 @@ export default function CrearGrupo() {
   // ============================
   // Pantalla post-creación: mostrar código
   // ============================
+  // ============================
+  // Pantalla post-creación: mostrar código
+  // ============================
   if (grupoCreado) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen px-6">
+      <div className="flex flex-col items-center justify-center min-h-screen px-6 bg-[radial-gradient(circle_at_top,_rgba(16,185,129,0.05)_0%,_transparent_50%)]">
         <div className="w-full max-w-sm text-center">
-          <div className="text-5xl mb-4">🎉</div>
-          <h1 className="text-2xl font-bold mb-2">¡Grupo creado!</h1>
-          <p className="text-gray-500 mb-8">
+          <div className="text-6xl mb-6">🎉</div>
+          <h1 className="text-3xl font-bold mb-3 text-white">¡Grupo creado!</h1>
+          <p className="text-zinc-400 mb-10 text-sm">
             Compartí este código para que tus amigos se unan
           </p>
 
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-6">
-            <p className="text-sm text-gray-400 mb-2">Código de invitación</p>
-            <p className="text-4xl font-mono font-bold tracking-[0.3em] text-emerald-600">
+          <div className="glass-card p-8 mb-8 border-emerald-500/30">
+            <p className="text-xs text-zinc-500 uppercase tracking-widest mb-3 font-medium">Código de invitación</p>
+            <p className="text-5xl font-mono font-bold tracking-[0.2em] text-emerald-500 drop-shadow-[0_0_15px_rgba(16,185,129,0.5)]">
               {grupoCreado.inviteCode}
             </p>
           </div>
 
-          <div className="space-y-3 mb-8">
+          <div className="space-y-4 mb-10">
             <button
               onClick={copiarCodigo}
-              className="w-full py-3 bg-white border-2 border-gray-200 hover:border-gray-300 rounded-xl font-medium transition-colors"
+              className="w-full py-4 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-700 hover:border-zinc-600 active:bg-zinc-700 text-white rounded-2xl font-medium transition-all"
             >
               {copiado ? '¡Copiado!' : 'Copiar código'}
             </button>
             <button
               onClick={compartirLink}
-              className="w-full py-3 bg-white border-2 border-gray-200 hover:border-gray-300 rounded-xl font-medium transition-colors"
+              className="w-full py-4 bg-zinc-900/50 hover:bg-zinc-800 border border-zinc-700 hover:border-zinc-600 active:bg-zinc-700 text-white rounded-2xl font-medium transition-all"
             >
               Compartir link
             </button>
@@ -190,7 +193,7 @@ export default function CrearGrupo() {
 
           <button
             onClick={() => navigate('/dashboard', { replace: true })}
-            className="w-full py-4 bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white text-lg font-semibold rounded-2xl shadow-sm transition-colors"
+            className="w-full py-4 btn-aesthetic text-lg tracking-wide hover:scale-[1.02]"
           >
             Ir al Dashboard
           </button>
@@ -203,27 +206,27 @@ export default function CrearGrupo() {
   // Formulario de creación
   // ============================
   return (
-    <div className="min-h-screen px-6 py-8">
+    <div className="min-h-screen px-6 py-8 pb-24 bg-[radial-gradient(circle_at_top,_rgba(16,185,129,0.05)_0%,_transparent_50%)]">
       <div className="w-full max-w-sm mx-auto">
         <button
           onClick={() => navigate('/')}
-          className="text-gray-400 hover:text-gray-600 mb-6 text-sm"
+          className="text-zinc-500 hover:text-white mb-8 text-sm flex items-center gap-2 transition-colors uppercase tracking-widest font-medium"
         >
-          ← Volver
+          <span>←</span> Volver
         </button>
 
-        <h1 className="text-2xl font-bold mb-6">Crear grupo</h1>
+        <h1 className="text-3xl font-bold mb-8 text-white tracking-tight">Crear grupo</h1>
 
         {error && (
-          <div className="bg-red-50 text-red-600 p-3 rounded-xl mb-4 text-sm">
+          <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-xl mb-6 text-sm backdrop-blur-sm">
             {error}
           </div>
         )}
 
-        <div className="space-y-5">
+        <div className="space-y-6">
           {/* Apodo */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2 ml-1">
               Tu apodo
             </label>
             <input
@@ -231,13 +234,13 @@ export default function CrearGrupo() {
               value={apodo}
               onChange={(e) => setApodo(e.target.value)}
               placeholder="Ej: Benja"
-              className="w-full py-3 px-4 border-2 border-gray-200 rounded-xl focus:border-emerald-500 focus:outline-none"
+              className="w-full py-4 px-5 bg-zinc-900/50 border border-white/10 rounded-2xl focus:border-emerald-500/50 focus:outline-none text-white placeholder-zinc-700 transition-colors"
             />
           </div>
 
           {/* Nombre del grupo */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2 ml-1">
               Nombre del grupo
             </label>
             <input
@@ -245,22 +248,22 @@ export default function CrearGrupo() {
               value={nombreGrupo}
               onChange={(e) => setNombreGrupo(e.target.value)}
               placeholder="Ej: Los saludables"
-              className="w-full py-3 px-4 border-2 border-gray-200 rounded-xl focus:border-emerald-500 focus:outline-none"
+              className="w-full py-4 px-5 bg-zinc-900/50 border border-white/10 rounded-2xl focus:border-emerald-500/50 focus:outline-none text-white placeholder-zinc-700 transition-colors"
             />
           </div>
 
           {/* Hábitos */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-xs font-bold text-zinc-500 uppercase tracking-widest mb-3 ml-1">
               Hábitos
             </label>
-            <div className="space-y-3">
+            <div className="space-y-4">
               {habitos.map((habito, index) => (
                 <div
                   key={index}
-                  className="bg-white border-2 border-gray-100 rounded-xl p-3 space-y-2"
+                  className="glass-card p-4 space-y-3"
                 >
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-3">
                     <input
                       type="text"
                       value={habito.name}
@@ -268,12 +271,12 @@ export default function CrearGrupo() {
                         actualizarHabito(index, 'name', e.target.value)
                       }
                       placeholder="Nombre del hábito"
-                      className="flex-1 py-2 px-3 border border-gray-200 rounded-lg focus:border-emerald-500 focus:outline-none text-sm"
+                      className="flex-1 py-3 px-4 bg-zinc-900/50 border border-white/10 rounded-xl focus:border-emerald-500/50 focus:outline-none text-white placeholder-zinc-700 text-sm transition-colors"
                     />
                     {habitos.length > 1 && (
                       <button
                         onClick={() => eliminarHabito(index)}
-                        className="text-gray-300 hover:text-red-400 text-lg px-1"
+                        className="text-zinc-600 hover:text-red-500 p-2 transition-colors"
                       >
                         ✕
                       </button>
@@ -284,13 +287,12 @@ export default function CrearGrupo() {
                       <button
                         key={nivel}
                         onClick={() => actualizarHabito(index, 'level', nivel)}
-                        className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
-                          habito.level === nivel
-                            ? 'bg-emerald-500 text-white'
-                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                        }`}
+                        className={`flex-1 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${habito.level === nivel
+                            ? 'bg-emerald-500 text-black shadow-[0_0_10px_rgba(16,185,129,0.4)]'
+                            : 'bg-zinc-800 text-zinc-500 hover:bg-zinc-700'
+                          }`}
                       >
-                        Nv.{nivel} ({PUNTOS_POR_NIVEL[nivel]}pts)
+                        Nv.{nivel} ({PUNTOS_POR_NIVEL[nivel]})
                       </button>
                     ))}
                   </div>
@@ -299,7 +301,7 @@ export default function CrearGrupo() {
             </div>
             <button
               onClick={agregarHabito}
-              className="mt-3 w-full py-2 border-2 border-dashed border-gray-300 hover:border-emerald-400 rounded-xl text-gray-500 hover:text-emerald-600 text-sm font-medium transition-colors"
+              className="mt-4 w-full py-3 border border-dashed border-zinc-700 hover:border-emerald-500/50 rounded-xl text-zinc-500 hover:text-emerald-500 text-sm font-medium transition-colors uppercase tracking-widest"
             >
               + Agregar hábito
             </button>
@@ -307,7 +309,7 @@ export default function CrearGrupo() {
 
           {/* Premio por ronda */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2 ml-1">
               Premio por ronda
             </label>
             <input
@@ -315,31 +317,31 @@ export default function CrearGrupo() {
               value={premio}
               onChange={(e) => setPremio(e.target.value)}
               placeholder="Ej: El perdedor paga la cena"
-              className="w-full py-3 px-4 border-2 border-gray-200 rounded-xl focus:border-emerald-500 focus:outline-none"
+              className="w-full py-4 px-5 bg-zinc-900/50 border border-white/10 rounded-2xl focus:border-emerald-500/50 focus:outline-none text-white placeholder-zinc-700 transition-colors"
             />
           </div>
 
           {/* Premio anual */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2 ml-1">
               Premio anual{' '}
-              <span className="text-gray-400 font-normal">(opcional)</span>
+              <span className="text-zinc-600 font-normal lowercase tracking-normal">(opcional)</span>
             </label>
             <input
               type="text"
               value={premioAnual}
               onChange={(e) => setPremioAnual(e.target.value)}
               placeholder="Ej: El perdedor paga un viaje"
-              className="w-full py-3 px-4 border-2 border-gray-200 rounded-xl focus:border-emerald-500 focus:outline-none"
+              className="w-full py-4 px-5 bg-zinc-900/50 border border-white/10 rounded-2xl focus:border-emerald-500/50 focus:outline-none text-white placeholder-zinc-700 transition-colors"
             />
           </div>
 
           {/* Frecuencia */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-xs font-bold text-zinc-500 uppercase tracking-widest mb-3 ml-1">
               Frecuencia de ronda
             </label>
-            <div className="flex gap-3">
+            <div className="flex gap-3 bg-zinc-900/50 p-1 rounded-2xl border border-white/5">
               {[
                 { value: 'weekly', label: 'Semanal' },
                 { value: 'monthly', label: 'Mensual' },
@@ -347,11 +349,10 @@ export default function CrearGrupo() {
                 <button
                   key={opt.value}
                   onClick={() => setPeriod(opt.value)}
-                  className={`flex-1 py-3 rounded-xl font-medium transition-colors ${
-                    period === opt.value
-                      ? 'bg-emerald-500 text-white'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
+                  className={`flex-1 py-3 rounded-xl text-sm font-bold uppercase tracking-wide transition-all ${period === opt.value
+                      ? 'bg-zinc-800 text-white shadow-lg'
+                      : 'text-zinc-500 hover:text-zinc-300'
+                    }`}
                 >
                   {opt.label}
                 </button>
@@ -363,7 +364,7 @@ export default function CrearGrupo() {
           <button
             onClick={handleCrear}
             disabled={loading || !formValido()}
-            className="w-full py-4 bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-lg font-semibold rounded-2xl shadow-sm transition-colors mt-4"
+            className="w-full py-4 btn-aesthetic text-lg tracking-wide disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] mt-8"
           >
             {loading ? 'Creando...' : 'Crear grupo'}
           </button>

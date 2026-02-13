@@ -53,24 +53,22 @@ export default function BottomNav() {
   const navigate = useNavigate()
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-gray-200 pb-[env(safe-area-inset-bottom)]">
-      <div className="flex justify-around items-center h-16 max-w-lg mx-auto">
-        {tabs.map((tab) => {
-          const active = location.pathname === tab.path
-          return (
-            <button
-              key={tab.path}
-              onClick={() => navigate(tab.path)}
-              className={`flex flex-col items-center gap-0.5 min-w-[4.5rem] py-2 rounded-xl transition-colors active:scale-95 ${
-                active ? 'text-emerald-600' : 'text-gray-400 active:text-gray-500'
+    <nav className="fixed bottom-6 left-4 right-4 h-16 glass-card flex items-center justify-around z-50 shadow-2xl shadow-black/50">
+      {tabs.map((tab) => {
+        const active = location.pathname === tab.path
+        return (
+          <button
+            key={tab.path}
+            onClick={() => navigate(tab.path)}
+            className={`flex flex-col items-center justify-center w-12 h-12 rounded-full transition-all duration-300 ${active
+                ? 'text-emerald-500 bg-emerald-500/10 shadow-[0_0_15px_rgba(16,185,129,0.3)] scale-110'
+                : 'text-zinc-500 hover:text-zinc-300 active:scale-95'
               }`}
-            >
-              {tab.icon(active)}
-              <span className="text-[11px] font-medium">{tab.label}</span>
-            </button>
-          )
-        })}
-      </div>
+          >
+            {tab.icon(active)}
+          </button>
+        )
+      })}
     </nav>
   )
 }

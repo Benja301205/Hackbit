@@ -14,7 +14,7 @@ function App() {
   const location = useLocation()
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 font-sans">
+    <div className="min-h-screen font-sans selection:bg-emerald-500 selection:text-white">
       <div key={location.pathname} className="page-enter">
         <Routes location={location}>
           <Route path="/" element={<Inicio />} />

@@ -9,19 +9,26 @@ import FinDeRondaModal from '../components/FinDeRondaModal'
 
 function StatusBadge({ status }) {
   const estilos = {
-    pending: 'bg-gray-100 text-gray-500',
-    approved: 'bg-emerald-100 text-emerald-700',
-    rejected: 'bg-red-100 text-red-600',
-    disputed: 'bg-amber-100 text-amber-700',
+    pending: 'text-zinc-400',
+    approved: 'text-emerald-400',
+    rejected: 'text-red-400',
+    disputed: 'text-amber-400',
+  }
+  const dotColor = {
+    pending: 'bg-zinc-500 shadow-[0_0_8px_rgba(113,113,122,0.5)]',
+    approved: 'bg-emerald-500 shadow-[0_0_8px_#10B981]',
+    rejected: 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]',
+    disputed: 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]',
   }
   const textos = {
     pending: 'Pendiente',
-    approved: 'Completado ✓',
-    rejected: 'Rechazado ✗',
-    disputed: 'Objetado ⚠',
+    approved: 'Completado',
+    rejected: 'Rechazado',
+    disputed: 'Objetado',
   }
   return (
-    <span className={`text-xs font-medium px-2 py-1 rounded-full ${estilos[status]}`}>
+    <span className={`text-xs font-medium flex items-center gap-2 ${estilos[status]}`}>
+      <span className={`w-1.5 h-1.5 rounded-full ${dotColor[status]}`}></span>
       {textos[status]}
     </span>
   )
@@ -65,7 +72,7 @@ export default function Dashboard() {
   if (!user) return null
 
   return (
-    <div className="min-h-screen pb-20">
+    <div className="min-h-screen pb-24 relative overflow-hidden">
       {/* Modal fin de ronda */}
       <FinDeRondaModal
         finDeRonda={finDeRonda}
@@ -74,17 +81,20 @@ export default function Dashboard() {
       />
 
       {/* Header */}
-      <div className="bg-emerald-500 text-white px-6 pt-8 pb-6">
-        <p className="text-emerald-100 text-sm">Hola, {user.nickname}</p>
-        <h1 className="text-xl font-bold">{user.groups?.name || 'Mi grupo'}</h1>
+      <div className="bg-transparent relative px-6 pt-12 pb-6 z-10">
+        <p className="text-zinc-400 text-sm mb-1">Hola, {user.nickname}</p>
+        <h1 className="text-3xl font-bold tracking-tight text-white">
+          {user.groups?.name || 'Mi grupo'}
+          <span className="text-emerald-500">.</span>
+        </h1>
         {userProfiles.length > 1 && (
           <select
             value={user.group_id}
             onChange={(e) => switchGroup(e.target.value)}
-            className="mt-2 w-full bg-emerald-600 text-white text-sm rounded-lg px-3 py-2 border border-emerald-400 focus:outline-none"
+            className="mt-4 w-full bg-zinc-900/50 text-white text-sm rounded-xl px-4 py-3 border border-zinc-800 focus:outline-none focus:border-emerald-500/50 transition-colors appearance-none"
           >
             {userProfiles.map((p) => (
-              <option key={p.group_id} value={p.group_id}>
+              <option key={p.group_id} value={p.group_id} className="bg-zinc-900">
                 {p.groups?.name || 'Grupo'}
               </option>
             ))}
@@ -92,59 +102,54 @@ export default function Dashboard() {
         )}
       </div>
 
-      <div className="px-4 -mt-3 space-y-4">
+      <div className="px-4 space-y-6 relative z-10">
         {/* ============================
             Ranking de la ronda actual
         ============================ */}
-        <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
-              Ranking de la ronda
+        <section className="glass-card p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em]">
+              Ranking
             </h2>
             {rondaActiva && (
-              <span className="text-xs text-gray-400 bg-gray-100 rounded-full px-2.5 py-1">
-                {diasRestantes} {diasRestantes === 1 ? 'día' : 'días'} restante{diasRestantes !== 1 ? 's' : ''}
+              <span className="text-[10px] font-medium text-emerald-400/80 bg-emerald-400/10 rounded-full px-2 py-0.5 border border-emerald-400/20">
+                {diasRestantes} {diasRestantes === 1 ? 'día' : 'días'}
               </span>
             )}
           </div>
 
           {ranking.length === 0 ? (
-            <p className="text-gray-400 text-sm py-2">No hay participantes todavía</p>
+            <p className="text-zinc-600 text-sm py-2">No hay participantes todavía</p>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-3">
               {ranking.map((item, index) => {
                 const esPrimero = index === 0 && item.puntos > 0
                 const esMio = item.user.id === user.id
                 return (
                   <div
                     key={item.user.id}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${
-                      esPrimero
-                        ? 'bg-emerald-50 border border-emerald-200'
-                        : 'bg-gray-50'
-                    } ${esMio ? 'ring-2 ring-emerald-300' : ''}`}
+                    className={`flex items-center gap-3 py-2 transition-colors ${esMio ? 'opacity-100' : 'opacity-80'
+                      }`}
                   >
                     <span
-                      className={`w-7 h-7 flex items-center justify-center rounded-full text-sm font-bold ${
-                        esPrimero
-                          ? 'bg-emerald-500 text-white'
-                          : 'bg-gray-200 text-gray-600'
-                      }`}
+                      className={`w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold border ${esPrimero
+                          ? 'border-emerald-500 text-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.3)]'
+                          : 'border-zinc-700 text-zinc-500'
+                        }`}
                     >
                       {index + 1}
                     </span>
-                    <span className="flex-1 text-sm font-medium truncate">
+                    <span className={`flex-1 text-sm truncate ${esMio ? 'text-emerald-400 italic font-medium' : 'text-zinc-300'}`}>
                       {item.user.nickname}
                       {esMio && (
-                        <span className="text-gray-400 font-normal"> (vos)</span>
+                        <span className="text-zinc-600 font-normal not-italic text-xs ml-2"> (vos)</span>
                       )}
                     </span>
                     <span
-                      className={`text-sm font-bold ${
-                        esPrimero ? 'text-emerald-600' : 'text-gray-600'
-                      }`}
+                      className={`text-sm font-bold ${esPrimero ? 'text-emerald-500' : 'text-zinc-500'
+                        }`}
                     >
-                      {item.puntos} pts
+                      {item.puntos}
                     </span>
                   </div>
                 )
@@ -156,32 +161,36 @@ export default function Dashboard() {
         {/* ============================
             Mis hábitos de hoy
         ============================ */}
-        <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
-          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">
-            Mis hábitos de hoy
+        <section className="glass-card p-5">
+          <h2 className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em] mb-4">
+            Mis hábitos
           </h2>
 
           {habitos.length === 0 ? (
-            <p className="text-gray-400 text-sm py-2">No hay hábitos configurados</p>
+            <p className="text-zinc-600 text-sm py-2">No hay hábitos configurados</p>
           ) : (
             <div className="space-y-3">
               {habitos.map((habito) => {
                 const completion = misCompletions[habito.id]
                 const estado = completion?.status
                 const pendiente = !completion || estado === 'rejected'
+                const completed = estado === 'approved'
 
                 return (
                   <div
                     key={habito.id}
-                    className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl"
+                    className={`flex items-center gap-3 p-3 rounded-xl transition-all ${completed
+                        ? 'bg-emerald-500/5 border-l-2 border-emerald-500/50'
+                        : 'bg-white/5 border border-white/5'
+                      }`}
                   >
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <span className="text-sm font-medium truncate">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className={`text-sm font-medium truncate ${completed ? 'text-emerald-100' : 'text-zinc-200'}`}>
                           {habito.name}
                         </span>
-                        <span className="text-xs text-gray-400 shrink-0">
-                          Nv.{habito.level} · {PUNTOS_POR_NIVEL[habito.level]}pts
+                        <span className="text-[10px] text-zinc-500 shrink-0 uppercase tracking-wider">
+                          Nv.{habito.level}
                         </span>
                       </div>
                       {completion && <StatusBadge status={estado} />}
@@ -190,7 +199,7 @@ export default function Dashboard() {
                     {pendiente && (
                       <button
                         onClick={() => navigate(`/completar/${habito.id}`)}
-                        className="shrink-0 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white text-sm font-medium rounded-lg transition-colors"
+                        className="btn-aesthetic shrink-0 px-3 py-1.5 text-xs"
                       >
                         {estado === 'rejected' ? 'Reintentar' : 'Completar'}
                       </button>
@@ -206,24 +215,22 @@ export default function Dashboard() {
             Disputas pendientes
         ============================ */}
         {disputasPendientes > 0 && (
-          <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
+          <section className="glass-card p-5 border-amber-500/20 bg-amber-500/5">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
-                  Disputas pendientes
+                <h2 className="text-[10px] font-bold text-amber-500 uppercase tracking-[0.2em]">
+                  Disputas
                 </h2>
-                <p className="text-gray-400 text-sm mt-0.5">
-                  {disputasPendientes} objeción{disputasPendientes !== 1 ? 'es' : ''} por responder
+                <p className="text-zinc-400 text-xs mt-1">
+                  {disputasPendientes} objeción{disputasPendientes !== 1 ? 'es' : ''}
                 </p>
               </div>
               <button
                 onClick={() => navigate('/actividad')}
-                className="relative px-4 py-2.5 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-white text-sm font-medium rounded-lg transition-colors"
+                className="relative px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-500 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors border border-amber-500/50"
               >
-                Ver
-                <span className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
-                  {disputasPendientes}
-                </span>
+                Revisar
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_#ef4444]"></span>
               </button>
             </div>
           </section>
@@ -232,37 +239,42 @@ export default function Dashboard() {
         {/* ============================
             Actividad reciente
         ============================ */}
-        <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
-              Actividad reciente
+        <section className="glass-card p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em]">
+              Actividad
             </h2>
             <button
               onClick={() => navigate('/actividad')}
-              className="text-emerald-600 text-sm font-medium"
+              className="text-emerald-500 text-xs font-medium hover:text-emerald-400 transition-colors"
             >
               Ver todo
             </button>
           </div>
           {actividadReciente.length === 0 ? (
-            <p className="text-gray-400 text-sm py-2">No hay actividad reciente</p>
+            <p className="text-zinc-600 text-sm py-2">No hay actividad reciente</p>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-3">
               {actividadReciente.slice(0, 5).map((c) => (
-                <div key={c.id} className="flex items-center gap-3 bg-gray-50 rounded-xl p-2.5">
+                <div key={c.id} className="flex items-center gap-3 border-b border-white/5 pb-3 last:border-0 last:pb-0">
                   <img
                     src={c.photo_url}
                     alt=""
-                    className="w-10 h-10 rounded-lg object-cover shrink-0"
+                    className="w-8 h-8 rounded-lg object-cover shrink-0 border border-white/10"
                   />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">
-                      {c.users?.nickname} — {c.habits?.name}
+                    <p className="text-sm font-medium truncate text-zinc-300">
+                      <span className="text-white">{c.users?.nickname}</span>
+                      <span className="text-zinc-500 mx-1.5">/</span>
+                      {c.habits?.name}
                     </p>
-                    <p className="text-xs text-gray-400">
-                      {PUNTOS_POR_NIVEL[c.habits?.level]}pts · {new Date(c.created_at).toLocaleDateString('es-AR')}
+                    <p className="text-[10px] text-zinc-500">
+                      {new Date(c.created_at).toLocaleDateString('es-AR', { hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>
+                  <span className="text-emerald-500/50 text-xs font-bold">
+                    +{PUNTOS_POR_NIVEL[c.habits?.level]}
+                  </span>
                 </div>
               ))}
             </div>
