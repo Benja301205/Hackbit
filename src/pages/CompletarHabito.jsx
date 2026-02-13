@@ -2,8 +2,9 @@ import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useSession } from '../hooks/useSession'
 import { supabase } from '../lib/supabase'
-import { compressImage } from '../lib/image'
+import { applyStamp } from '../lib/stamp'
 import { PUNTOS_POR_NIVEL, formatDate } from '../lib/utils'
+import stampUrl from '../assets/hackbit_stamp.png'
 
 export default function CompletarHabito() {
   const { habitoId } = useParams()
@@ -13,8 +14,14 @@ export default function CompletarHabito() {
 
   const [habito, setHabito] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [preview, setPreview] = useState(null)
-  const [archivo, setArchivo] = useState(null)
+
+  // State for image processing & stamp
+  const [preview, setPreview] = useState(null) // Shows the raw image immediately
+  const [archivo, setArchivo] = useState(null) // The final stamped blob for upload
+  const [stampMeta, setStampMeta] = useState(null) // Color, aspectRatio
+  const [animateStamp, setAnimateStamp] = useState(false)
+  const [procesando, setProcesando] = useState(false)
+
   const [enviando, setEnviando] = useState(false)
   const [error, setError] = useState(null)
 
@@ -41,14 +48,34 @@ export default function CompletarHabito() {
     const file = e.target.files?.[0]
     if (!file) return
 
+    // Reset states
     setError(null)
+    setStampMeta(null)
+    setAnimateStamp(false)
+    setArchivo(null)
+
+    // 1. Show immediate preview of original file
+    const objectUrl = URL.createObjectURL(file)
+    setPreview(objectUrl)
+
+    // 2. Process stamp in background
+    setProcesando(true)
 
     try {
-      const blob = await compressImage(file)
+      const { blob, meta } = await applyStamp(file)
       setArchivo(blob)
-      setPreview(URL.createObjectURL(blob))
-    } catch {
-      setError('No se pudo procesar la imagen')
+      setStampMeta(meta)
+
+      // Trigger animation slightly after to ensure DOM is ready
+      setTimeout(() => {
+        setAnimateStamp(true)
+      }, 100)
+
+    } catch (err) {
+      console.error(err)
+      setError('No se pudo procesar la imagen y aplicar el sello')
+    } finally {
+      setProcesando(false)
     }
   }
 
@@ -160,18 +187,40 @@ export default function CompletarHabito() {
           </button>
         ) : (
           <div className="mb-6">
-            <div className="relative rounded-2xl overflow-hidden mb-3">
+            <div className={`relative rounded-2xl overflow-hidden mb-3 ${animateStamp ? 'shake-active' : ''}`}>
               <img
                 src={preview}
                 alt="Vista previa"
                 className="w-full object-cover"
               />
+
+              {/* Stamp Overlay */}
+              {stampMeta && (
+                <div
+                  className={`absolute bottom-[5%] right-[5%] w-[35%] bg-contain bg-no-repeat z-10 ${animateStamp ? 'slam-active' : 'opacity-0'} ${stampMeta.color === 'red' ? 'mix-blend-multiply opacity-90' : 'drop-shadow-md'
+                    }`}
+                  style={{
+                    backgroundImage: `url(${stampUrl})`,
+                    aspectRatio: stampMeta.aspectRatio
+                  }}
+                />
+              )}
+
+              {/* Procesando Overlay */}
+              {procesando && (
+                <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                  <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin" />
+                </div>
+              )}
+
               <button
                 onClick={() => {
                   setPreview(null)
                   setArchivo(null)
+                  setStampMeta(null)
+                  setAnimateStamp(false)
                 }}
-                className="absolute top-3 right-3 w-8 h-8 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center text-sm transition-colors"
+                className="absolute top-3 right-3 w-8 h-8 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center text-sm transition-colors z-20"
               >
                 ✕
               </button>
@@ -183,7 +232,6 @@ export default function CompletarHabito() {
           ref={fileInputRef}
           type="file"
           accept="image/*"
-
           onChange={handleFileChange}
           className="hidden"
         />
@@ -192,10 +240,10 @@ export default function CompletarHabito() {
           <div className="space-y-3">
             <button
               onClick={handleEnviar}
-              disabled={enviando}
+              disabled={enviando || procesando}
               className="w-full py-4 bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-lg font-semibold rounded-2xl shadow-sm transition-colors"
             >
-              {enviando ? 'Subiendo...' : 'Completar hábito'}
+              {enviando ? 'Subiendo...' : procesando ? 'Procesando...' : 'Completar hábito'}
             </button>
             <button
               onClick={() => fileInputRef.current?.click()}
