@@ -166,7 +166,7 @@ export default function Disputa() {
         </div>
 
         {/* Paso 1: Objeción */}
-        <div className="bg-red-50 rounded-2xl p-4 mb-4">
+        <div className="bg-red-50 rounded-2xl p-4 mb-4 stagger-item" style={{ '--i': 0 }}>
           <p className="text-xs text-red-400 uppercase tracking-wide font-semibold mb-1">Objeción</p>
           <p className="text-sm font-medium text-red-700 mb-1">
             {disputa.users?.nickname || 'Objetante'}:
@@ -176,7 +176,7 @@ export default function Disputa() {
 
         {/* Paso 2: Defensa */}
         {disputa.defense_text ? (
-          <div className="bg-blue-50 rounded-2xl p-4 mb-4">
+          <div className="bg-blue-50 rounded-2xl p-4 mb-4 stagger-item" style={{ '--i': 1 }}>
             <p className="text-xs text-blue-400 uppercase tracking-wide font-semibold mb-1">Defensa</p>
             <p className="text-sm font-medium text-blue-700 mb-1">
               {completion.users?.nickname}:
@@ -184,7 +184,7 @@ export default function Disputa() {
             <p className="text-sm text-blue-600">{disputa.defense_text}</p>
           </div>
         ) : esAcusado && !resuelta ? (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4 stagger-item" style={{ '--i': 1 }}>
             <p className="text-xs text-gray-400 uppercase tracking-wide font-semibold mb-2">Tu defensa</p>
             <textarea
               value={defensa}
@@ -201,18 +201,18 @@ export default function Disputa() {
               {enviando ? 'Enviando...' : 'Enviar defensa'}
             </button>
             {error && (
-              <p className="text-red-500 text-sm text-center mt-2">{error}</p>
+              <p className="text-red-500 text-sm text-center mt-2 animate-error">{error}</p>
             )}
           </div>
         ) : !resuelta ? (
-          <div className="bg-gray-50 rounded-2xl p-4 mb-4">
+          <div className="bg-gray-50 rounded-2xl p-4 mb-4 stagger-item" style={{ '--i': 1 }}>
             <p className="text-sm text-gray-500">Esperando defensa de {completion.users?.nickname}...</p>
           </div>
         ) : null}
 
         {/* Paso 3: Resolución */}
         {resuelta ? (
-          <div className={`rounded-2xl p-4 mb-4 ${disputa.resolution === 'accepted' ? 'bg-emerald-50' : 'bg-red-50'
+          <div className={`rounded-2xl p-4 mb-4 ${disputa.resolution === 'accepted' ? 'bg-emerald-50 animate-success' : 'bg-red-50 animate-error'
             }`}>
             <p className="text-xs uppercase tracking-wide font-semibold mb-1" style={{
               color: disputa.resolution === 'accepted' ? '#047857' : '#dc2626'
@@ -228,7 +228,7 @@ export default function Disputa() {
             </p>
           </div>
         ) : esObjetante && disputa.defense_text ? (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-4 stagger-item" style={{ '--i': 2 }}>
             <p className="text-xs text-gray-400 uppercase tracking-wide font-semibold mb-3">Tu decisión</p>
             <div className="flex gap-3">
               <button

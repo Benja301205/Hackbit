@@ -11,6 +11,7 @@ export default function ValidarHabitos() {
   const [pendientes, setPendientes] = useState([])
   const [loading, setLoading] = useState(true)
   const [procesando, setProcesando] = useState(null)
+  const [removingId, setRemovingId] = useState(null)
 
   useEffect(() => {
     if (!loadingSession && !user) {
@@ -68,7 +69,11 @@ export default function ValidarHabitos() {
       .eq('id', completionId)
 
     if (!error) {
-      setPendientes((prev) => prev.filter((c) => c.id !== completionId))
+      setRemovingId(completionId)
+      setTimeout(() => {
+        setPendientes((prev) => prev.filter((c) => c.id !== completionId))
+        setRemovingId(null)
+      }, 250)
     }
 
     setProcesando(null)
@@ -112,17 +117,18 @@ export default function ValidarHabitos() {
           </div>
         ) : (
           <div className="space-y-6">
-            {pendientes.map((completion) => (
+            {pendientes.map((completion, index) => (
               <div
                 key={completion.id}
-                className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
+                className={`bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden ${removingId === completion.id ? 'modal-exit' : 'stagger-item'}`}
+                style={{ '--i': index }}
               >
                 {/* Foto */}
                 <div className="aspect-square bg-gray-100">
                   <img
                     src={completion.photo_url}
                     alt="Foto del hábito"
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover photo-reveal"
                   />
                 </div>
 

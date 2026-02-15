@@ -18,6 +18,7 @@ export default function Actividad() {
 
   // Nuevo estado para la vista minimizada (modal)
   const [selectedCompletion, setSelectedCompletion] = useState(null)
+  const [closing, setClosing] = useState(false)
 
   useEffect(() => {
     if (!loadingSession && !user) {
@@ -163,16 +164,17 @@ export default function Actividad() {
             <div key={dateLabel}>
               <h3 className="text-sm font-semibold text-gray-500 mb-3 px-1">{dateLabel}</h3>
               <div className="grid grid-cols-3 gap-2">
-                {groupedCompletions[dateLabel].map((completion) => (
+                {groupedCompletions[dateLabel].map((completion, i) => (
                   <button
                     key={completion.id}
                     onClick={() => setSelectedCompletion(completion)}
-                    className="aspect-square bg-gray-100 rounded-xl overflow-hidden shadow-sm active:scale-95 transition-transform"
+                    className="aspect-square bg-gray-100 rounded-xl overflow-hidden shadow-sm active:scale-95 transition-transform stagger-item"
+                    style={{ '--i': Math.min(i, 8) }}
                   >
                     <img
                       src={completion.photo_url}
                       alt={completion.habits?.name}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover photo-reveal"
                     />
                   </button>
                 ))}
@@ -184,10 +186,18 @@ export default function Actividad() {
 
       {/* Modal Minimizado */}
       {selectedCompletion && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-6 backdrop-blur-sm"
-          onClick={() => setSelectedCompletion(null)}>
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden"
-            onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-6 backdrop-blur-sm modal-overlay"
+          onClick={() => {
+            setClosing(true)
+          }}>
+          <div className={`bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden ${closing ? 'modal-exit' : 'modal-enter'}`}
+            onClick={(e) => e.stopPropagation()}
+            onAnimationEnd={() => {
+              if (closing) {
+                setSelectedCompletion(null)
+                setClosing(false)
+              }
+            }}>
 
             {/* Header del Modal */}
             <div className="relative">
@@ -198,7 +208,7 @@ export default function Actividad() {
               />
 
               <button
-                onClick={() => setSelectedCompletion(null)}
+                onClick={() => setClosing(true)}
                 className="absolute top-3 right-3 bg-black/30 hover:bg-black/50 text-white rounded-full p-1 transition-colors"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

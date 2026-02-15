@@ -131,9 +131,10 @@ export default function TablaAnual() {
               return (
                 <div
                   key={item.id}
-                  className={`grid grid-cols-[2.5rem_1fr_5rem_4.5rem] gap-2 px-4 py-3 items-center border-b border-gray-50 last:border-b-0 ${
+                  className={`grid grid-cols-[2.5rem_1fr_5rem_4.5rem] gap-2 px-4 py-3 items-center border-b border-gray-50 last:border-b-0 stagger-item ${
                     esMio ? 'bg-emerald-50' : ''
                   }`}
+                  style={{ '--i': index }}
                 >
                   <span
                     className={`w-7 h-7 flex items-center justify-center rounded-full text-sm font-bold ${

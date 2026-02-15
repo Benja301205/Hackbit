@@ -36,7 +36,7 @@ function StatusBadge({ status }) {
 
 export default function Dashboard() {
   const navigate = useNavigate()
-  const { user, userProfiles, loading: loadingSession, switchGroup } = useSession()
+  const { user, userProfiles, loading: loadingSession } = useSession()
   const { finDeRonda, checking, cerrarModal } = useRoundCheck(user)
   const {
     ranking,
@@ -88,17 +88,12 @@ export default function Dashboard() {
           <span className="text-emerald-500">.</span>
         </h1>
         {userProfiles.length > 1 && (
-          <select
-            value={user.group_id}
-            onChange={(e) => switchGroup(e.target.value)}
-            className="mt-4 w-full bg-zinc-900/50 text-white text-sm rounded-xl px-4 py-3 border border-zinc-800 focus:outline-none focus:border-emerald-500/50 transition-colors appearance-none"
+          <button
+            onClick={() => navigate('/mis-grupos')}
+            className="mt-3 text-emerald-500/60 hover:text-emerald-500 text-xs uppercase tracking-widest font-medium transition-colors"
           >
-            {userProfiles.map((p) => (
-              <option key={p.group_id} value={p.group_id} className="bg-zinc-900">
-                {p.groups?.name || 'Grupo'}
-              </option>
-            ))}
-          </select>
+            Cambiar grupo
+          </button>
         )}
       </div>
 
@@ -128,8 +123,8 @@ export default function Dashboard() {
                 return (
                   <div
                     key={item.user.id}
-                    className={`flex items-center gap-3 py-2 transition-colors ${esMio ? 'opacity-100' : 'opacity-80'
-                      }`}
+                    className="flex items-center gap-3 py-2 transition-colors stagger-item"
+                    style={{ '--i': index }}
                   >
                     <span
                       className={`w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold border ${esPrimero
@@ -170,7 +165,7 @@ export default function Dashboard() {
             <p className="text-zinc-600 text-sm py-2">No hay hábitos configurados</p>
           ) : (
             <div className="space-y-3">
-              {habitos.map((habito) => {
+              {habitos.map((habito, index) => {
                 const completion = misCompletions[habito.id]
                 const estado = completion?.status
                 const pendiente = !completion || estado === 'rejected'
@@ -179,10 +174,11 @@ export default function Dashboard() {
                 return (
                   <div
                     key={habito.id}
-                    className={`flex items-center gap-3 p-3 rounded-xl transition-all ${completed
+                    className={`flex items-center gap-3 p-3 rounded-xl transition-all stagger-item ${completed
                         ? 'bg-emerald-500/5 border-l-2 border-emerald-500/50'
                         : 'bg-white/5 border border-white/5'
                       }`}
+                    style={{ '--i': index }}
                   >
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
@@ -215,7 +211,7 @@ export default function Dashboard() {
             Disputas pendientes
         ============================ */}
         {disputasPendientes > 0 && (
-          <section className="glass-card p-5 border-amber-500/20 bg-amber-500/5">
+          <section className="glass-card p-5 border-amber-500/20 bg-amber-500/5 animate-scaleIn">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-[10px] font-bold text-amber-500 uppercase tracking-[0.2em]">
@@ -230,7 +226,7 @@ export default function Dashboard() {
                 className="relative px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-500 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors border border-amber-500/50"
               >
                 Revisar
-                <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse shadow-[0_0_8px_#ef4444]"></span>
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-badge-ping shadow-[0_0_8px_#ef4444]"></span>
               </button>
             </div>
           </section>
@@ -255,12 +251,12 @@ export default function Dashboard() {
             <p className="text-zinc-600 text-sm py-2">No hay actividad reciente</p>
           ) : (
             <div className="space-y-3">
-              {actividadReciente.slice(0, 5).map((c) => (
-                <div key={c.id} className="flex items-center gap-3 border-b border-white/5 pb-3 last:border-0 last:pb-0">
+              {actividadReciente.slice(0, 5).map((c, index) => (
+                <div key={c.id} className="flex items-center gap-3 border-b border-white/5 pb-3 last:border-0 last:pb-0 stagger-item" style={{ '--i': index }}>
                   <img
                     src={c.photo_url}
                     alt=""
-                    className="w-8 h-8 rounded-lg object-cover shrink-0 border border-white/10"
+                    className="w-8 h-8 rounded-lg object-cover shrink-0 border border-white/10 photo-reveal"
                   />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate text-zinc-300">

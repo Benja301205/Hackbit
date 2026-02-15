@@ -5,7 +5,11 @@ import { generateInviteCode, calcularFechasRonda, PUNTOS_POR_NIVEL } from '../li
 
 export default function CrearGrupo() {
   const navigate = useNavigate()
-  const [apodo, setApodo] = useState('')
+  const [apodo, setApodo] = useState(() => {
+    const saved = localStorage.getItem('temp_nickname')
+    if (saved) localStorage.removeItem('temp_nickname')
+    return saved || ''
+  })
   const [nombreGrupo, setNombreGrupo] = useState('')
   const [habitos, setHabitos] = useState([{ name: '', level: 1 }])
   const [premio, setPremio] = useState('')
@@ -163,13 +167,13 @@ export default function CrearGrupo() {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen px-6 bg-[radial-gradient(circle_at_top,_rgba(16,185,129,0.05)_0%,_transparent_50%)]">
         <div className="w-full max-w-sm text-center">
-          <div className="text-6xl mb-6">🎉</div>
+          <div className="text-6xl mb-6 animate-celebrate">🎉</div>
           <h1 className="text-3xl font-bold mb-3 text-white">¡Grupo creado!</h1>
           <p className="text-zinc-400 mb-10 text-sm">
             Compartí este código para que tus amigos se unan
           </p>
 
-          <div className="glass-card p-8 mb-8 border-emerald-500/30">
+          <div className="glass-card p-8 mb-8 border-emerald-500/30 animate-scaleIn opacity-0" style={{ animationDelay: '0.15s' }}>
             <p className="text-xs text-zinc-500 uppercase tracking-widest mb-3 font-medium">Código de invitación</p>
             <p className="text-5xl font-mono font-bold tracking-[0.2em] text-emerald-500 drop-shadow-[0_0_15px_rgba(16,185,129,0.5)]">
               {grupoCreado.inviteCode}
@@ -218,7 +222,7 @@ export default function CrearGrupo() {
         <h1 className="text-3xl font-bold mb-8 text-white tracking-tight">Crear grupo</h1>
 
         {error && (
-          <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-xl mb-6 text-sm backdrop-blur-sm">
+          <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-xl mb-6 text-sm backdrop-blur-sm animate-error">
             {error}
           </div>
         )}
@@ -261,7 +265,8 @@ export default function CrearGrupo() {
               {habitos.map((habito, index) => (
                 <div
                   key={index}
-                  className="glass-card p-4 space-y-3"
+                  className="glass-card p-4 space-y-3 stagger-item"
+                  style={{ '--i': index }}
                 >
                   <div className="flex items-center gap-3">
                     <input

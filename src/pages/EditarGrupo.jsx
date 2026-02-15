@@ -145,7 +145,7 @@ export default function EditarGrupo() {
         <h1 className="text-2xl font-bold mb-6">Editar grupo</h1>
 
         {error && (
-          <div className="bg-red-50 text-red-600 p-3 rounded-xl mb-4 text-sm">
+          <div className="bg-red-50 text-red-600 p-3 rounded-xl mb-4 text-sm animate-error">
             {error}
           </div>
         )}
@@ -197,10 +197,11 @@ export default function EditarGrupo() {
               Hábitos
             </label>
             <div className="space-y-3">
-              {habitos.map((habito) => (
+              {habitos.map((habito, index) => (
                 <div
                   key={habito.id}
-                  className="bg-white border-2 border-gray-100 rounded-xl p-3 space-y-2"
+                  className="bg-white border-2 border-gray-100 rounded-xl p-3 space-y-2 stagger-item"
+                  style={{ '--i': index }}
                 >
                   <div className="flex items-center gap-2">
                     <input
@@ -238,7 +239,7 @@ export default function EditarGrupo() {
               {nuevosHabitos.map((habito) => (
                 <div
                   key={habito.tempId}
-                  className="bg-emerald-50 border-2 border-emerald-100 rounded-xl p-3 space-y-2"
+                  className="bg-emerald-50 border-2 border-emerald-100 rounded-xl p-3 space-y-2 animate-scaleIn"
                 >
                   <div className="flex items-center gap-2">
                     <input

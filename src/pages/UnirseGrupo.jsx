@@ -127,10 +127,11 @@ export default function UnirseGrupo() {
           <div>
             <p className="text-[10px] text-zinc-500 uppercase tracking-[0.2em] font-bold mb-3">Hábitos</p>
             <div className="space-y-2">
-              {habitos.map((h) => (
+              {habitos.map((h, index) => (
                 <div
                   key={h.id}
-                  className="flex items-center justify-between bg-zinc-900/50 border border-white/5 rounded-xl px-4 py-3"
+                  className="flex items-center justify-between bg-zinc-900/50 border border-white/5 rounded-xl px-4 py-3 stagger-item"
+                  style={{ '--i': index }}
                 >
                   <span className="text-sm font-medium text-zinc-200">{h.name}</span>
                   <span className="text-[10px] text-zinc-400 bg-white/5 border border-white/5 rounded-lg px-2 py-1 uppercase tracking-wider font-bold">
@@ -163,7 +164,7 @@ export default function UnirseGrupo() {
         </div>
 
         {error && (
-          <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-xl mb-6 text-sm backdrop-blur-sm">
+          <div className="bg-red-500/10 border border-red-500/20 text-red-500 p-4 rounded-xl mb-6 text-sm backdrop-blur-sm animate-error">
             {error}
           </div>
         )}

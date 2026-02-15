@@ -139,3 +139,177 @@ textarea {
 .shake-active {
   animation: shake 0.3s cubic-bezier(.36, .07, .19, .97) both;
 }
+
+/* === Animaciones UX === */
+
+/* Scale-in para modales y elementos que aparecen */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scaleIn {
+  animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Stagger para listas (usa --i en inline style) */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stagger-item {
+  opacity: 0;
+  animation: slideUp 0.3s ease-out forwards;
+  animation-delay: calc(var(--i, 0) * 60ms);
+}
+
+/* Modal overlay + entrada/salida */
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes modalOut {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+}
+
+.modal-overlay {
+  animation: overlayIn 0.2s ease-out forwards;
+}
+
+.modal-enter {
+  animation: modalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.modal-exit {
+  animation: modalOut 0.2s ease-in forwards;
+}
+
+/* Feedback de éxito */
+@keyframes successPulse {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-success {
+  animation: successPulse 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Feedback de error */
+@keyframes errorSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-error {
+  animation: errorSlideIn 0.3s ease-out forwards;
+}
+
+/* Badge de notificación pulsante */
+@keyframes badgePing {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.5;
+  }
+}
+
+.animate-badge-ping {
+  animation: badgePing 1.5s ease-in-out infinite;
+}
+
+/* Celebración bounce (trofeo, emojis) */
+@keyframes celebrateBounce {
+  0% {
+    opacity: 0;
+    transform: scale(0) rotate(-10deg);
+  }
+  50% {
+    transform: scale(1.2) rotate(5deg);
+  }
+  70% {
+    transform: scale(0.9) rotate(-2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.animate-celebrate {
+  animation: celebrateBounce 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* Revelación de fotos */
+@keyframes photoReveal {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.photo-reveal {
+  animation: photoReveal 0.3s ease-out forwards;
+}
+
+/* Focus glow para inputs */
+input:focus,
+textarea:focus,
+select:focus {
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+  transition: box-shadow 0.2s ease-out, border-color 0.2s ease-out;
+}

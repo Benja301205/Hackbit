@@ -169,7 +169,7 @@ export default function InfoGrupo() {
           <div className="flex gap-2">
             <button
               onClick={copiarCodigo}
-              className="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-xl text-sm font-medium transition-colors"
+              className={`flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-xl text-sm font-medium transition-colors ${copiado ? 'animate-success' : ''}`}
             >
               {copiado ? '¡Copiado!' : 'Copiar código'}
             </button>
@@ -198,10 +198,11 @@ export default function InfoGrupo() {
             )}
           </div>
           <div className="space-y-2">
-            {habitos.map((h) => (
+            {habitos.map((h, index) => (
               <div
                 key={h.id}
-                className="flex items-center justify-between bg-gray-50 rounded-lg px-3 py-2.5"
+                className="flex items-center justify-between bg-gray-50 rounded-lg px-3 py-2.5 stagger-item"
+                style={{ '--i': index }}
               >
                 <span className="text-sm font-medium">{h.name}</span>
                 <span className="text-xs text-gray-500 bg-gray-200 rounded-full px-2 py-0.5">
@@ -235,12 +236,13 @@ export default function InfoGrupo() {
             Miembros ({miembros.length})
           </h2>
           <div className="space-y-2">
-            {miembros.map((m) => (
+            {miembros.map((m, index) => (
               <div
                 key={m.id}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl ${
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl stagger-item ${
                   m.id === user.id ? 'bg-emerald-50' : 'bg-gray-50'
                 }`}
+                style={{ '--i': index }}
               >
                 <div className="w-8 h-8 bg-emerald-200 text-emerald-700 rounded-full flex items-center justify-center text-sm font-bold">
                   {m.nickname.charAt(0).toUpperCase()}
@@ -277,8 +279,8 @@ export default function InfoGrupo() {
 
       {/* Modal eliminar grupo */}
       {modalEliminar && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-6">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-sm">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-6 modal-overlay">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-sm modal-enter">
             <h3 className="text-lg font-bold mb-2">Eliminar grupo</h3>
             <p className="text-gray-500 text-sm mb-6">
               ¿Estás seguro? Se perderán todos los datos del grupo, incluyendo hábitos, fotos y ranking.
@@ -305,8 +307,8 @@ export default function InfoGrupo() {
 
       {/* Modal salir del grupo */}
       {modalSalir && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-6">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-sm">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-6 modal-overlay">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-sm modal-enter">
             <h3 className="text-lg font-bold mb-2">Salir del grupo</h3>
             <p className="text-gray-500 text-sm mb-6">
               ¿Estás seguro que querés salir del grupo?
