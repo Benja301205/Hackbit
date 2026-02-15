@@ -11,14 +11,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Stack
 
 - **Frontend:** React 19 + Vite
-- **Estilos:** Tailwind CSS v4 (via plugin `@tailwindcss/vite`, importado con `@import "tailwindcss"` en `src/index.css`)
+- **Estilos:** Tailwind CSS v4 (via plugin `@tailwindcss/vite`). Incluye animaciones personalizadas (`slam`, `shake`) y clases utilitarias (`.glass-card`, `.btn-aesthetic`) en `src/index.css`
 - **Backend/DB:** Supabase (PostgreSQL + Storage + Realtime)
 - **Routing:** React Router v7 (`BrowserRouter` en `main.jsx`)
-- **Sin sistema de login:** Identidad por `session_token` (UUID v4) en localStorage
+- **Sin sistema de login:** Identidad por `session_token` (UUID v4) en localStorage. Soporta múltiples grupos por token.
 
 ## Arquitectura
 
-App de competencia de hábitos entre amigos. Todo en español. Mobile-first (375px+). Solo Tailwind para estilos, sin librerías de componentes externas.
+App de competencia de hábitos entre amigos. Todo en español. Mobile-first (375px+). Tailwind para estilos + animaciones CSS custom.
 
 ### Estructura
 
@@ -26,8 +26,8 @@ App de competencia de hábitos entre amigos. Todo en español. Mobile-first (375
 src/
   components/   → BottomNav (nav inferior), FinDeRondaModal
   pages/        → Inicio, CrearGrupo, UnirseGrupo, Dashboard, CompletarHabito, ValidarHabitos, TablaAnual, InfoGrupo, Actividad, Disputa, EditarGrupo
-  lib/          → supabase.js (cliente), utils.js (fechas, puntos, códigos), image.js (compresión)
-  hooks/        → useSession (auth por token), useDashboard (datos del dashboard), useRoundCheck (cierre automático de rondas)
+  lib/          → supabase.js (cliente), utils.js (fechas, puntos, códigos), image.js (compresión), stamp.js (logica sello/watermark)
+  hooks/        → useSession (auth por token multi-grupo), useDashboard (datos del dashboard), useRoundCheck (cierre automático de rondas)
   App.jsx       → Router principal (Routes)
   main.jsx      → Entry point (BrowserRouter + StrictMode)
 supabase/
@@ -36,9 +36,11 @@ supabase/
 
 ### Flujo principal
 
-1. `useSession` verifica `session_token` en localStorage → busca usuario en DB
-2. `useRoundCheck` detecta si la ronda activa expiró → cierra ronda, calcula ganador, crea siguiente ronda, muestra modal
-3. `useDashboard` carga ranking (puntos de completions aprobadas), hábitos de hoy con estados, pendientes de validación
+1. `useSession` verifica `session_token` en localStorage → busca todos los perfiles asociados (multi-grupo) y selecciona el activo.
+2. `useRoundCheck` detecta si la ronda activa expiró → cierra ronda, calcula ganador, crea siguiente ronda, muestra modal.
+3. `useDashboard` carga ranking (puntos de completions aprobadas), hábitos de hoy con estados, conflictos/disputas pendientes.
+4. **Flujo de Disputas:** Las fotos se auto-aprueban. Otros usuarios pueden objetar (crea disputa). El usuario se defiende. El objetante resuelve (aceptar/rechazar).
+5. **Gestión de Grupos:** Creador puede editar/eliminar grupo. Miembros pueden salir.
 
 ### Configuración de Supabase
 

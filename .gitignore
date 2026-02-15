@@ -24,3 +24,8 @@ dist-ssr
 *.sln
 *.sw?
 .vercel
+
+# Agent skills
+.agent/
+.agents/
+.claude/

@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "app-habitos",
+			"path": "."
+		},
+		{
+			"name": "Sello para fotos hackbit",
+			"path": "../Sello para fotos hackbit"
+		}
+	],
+	"settings": {}
+}
