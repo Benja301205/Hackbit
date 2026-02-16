@@ -13,6 +13,7 @@ import Actividad from './pages/Actividad.jsx'
 import Disputa from './pages/Disputa.jsx'
 import EditarGrupo from './pages/EditarGrupo.jsx'
 import MisGrupos from './pages/MisGrupos.jsx'
+import Notificaciones from './pages/Notificaciones.jsx'
 
 function App() {
   const location = useLocation()
@@ -38,6 +39,7 @@ function App() {
             <Route path="/actividad" element={<Actividad />} />
             <Route path="/disputa/:disputaId" element={<Disputa />} />
             <Route path="/editar-grupo" element={<EditarGrupo />} />
+            <Route path="/notificaciones" element={<Notificaciones />} />
           </Route>
         </Routes>
       </div>

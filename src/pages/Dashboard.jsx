@@ -1,8 +1,9 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSession } from '../hooks/useSession'
 import { useDashboard } from '../hooks/useDashboard'
 import { useRoundCheck } from '../hooks/useRoundCheck'
+import { useNotificationScheduler } from '../hooks/useNotificationScheduler'
 import { PUNTOS_POR_NIVEL } from '../lib/utils'
 import BottomNav from '../components/BottomNav'
 import FinDeRondaModal from '../components/FinDeRondaModal'
@@ -50,6 +51,19 @@ export default function Dashboard() {
     recargar,
   } = useDashboard(user)
 
+  // Notification scheduler (local smart reminders)
+  useNotificationScheduler({ user, ranking, misCompletions })
+
+  // Onboarding banner state
+  const [showNotifBanner, setShowNotifBanner] = useState(
+    () => !localStorage.getItem('hackbit_notif_onboarding')
+  )
+
+  const dismissNotifBanner = () => {
+    localStorage.setItem('hackbit_notif_onboarding', '1')
+    setShowNotifBanner(false)
+  }
+
   useEffect(() => {
     if (!loadingSession && !user) {
       navigate('/', { replace: true })
@@ -82,11 +96,23 @@ export default function Dashboard() {
 
       {/* Header */}
       <div className="bg-transparent relative px-6 pt-12 pb-6 z-10">
-        <p className="text-zinc-400 text-sm mb-1">Hola, {user.nickname}</p>
-        <h1 className="text-3xl font-bold tracking-tight text-white">
-          {user.groups?.name || 'Mi grupo'}
-          <span className="text-emerald-500">.</span>
-        </h1>
+        <div className="flex items-start justify-between">
+          <div>
+            <p className="text-zinc-400 text-sm mb-1">Hola, {user.nickname}</p>
+            <h1 className="text-3xl font-bold tracking-tight text-white">
+              {user.groups?.name || 'Mi grupo'}
+              <span className="text-emerald-500">.</span>
+            </h1>
+          </div>
+          <button
+            onClick={() => navigate('/notificaciones')}
+            className="mt-1 w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-zinc-500 hover:text-emerald-500 hover:border-emerald-500/30 transition-all"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
+              <path fillRule="evenodd" d="M10 2a6 6 0 0 0-6 6c0 1.887-.454 3.665-1.257 5.234a.75.75 0 0 0 .515 1.076 32.91 32.91 0 0 0 3.256.508 3.5 3.5 0 0 0 6.972 0 32.903 32.903 0 0 0 3.256-.508.75.75 0 0 0 .515-1.076A11.448 11.448 0 0 1 16 8a6 6 0 0 0-6-6ZM8.05 14.943a33.54 33.54 0 0 0 3.9 0 2 2 0 0 1-3.9 0Z" clipRule="evenodd" />
+            </svg>
+          </button>
+        </div>
         {userProfiles.length > 1 && (
           <button
             onClick={() => navigate('/mis-grupos')}
@@ -98,6 +124,37 @@ export default function Dashboard() {
       </div>
 
       <div className="px-4 space-y-6 relative z-10">
+        {/* Banner de onboarding notificaciones */}
+        {showNotifBanner && (
+          <section className="glass-card p-4 border-emerald-500/20 bg-emerald-500/5 animate-scaleIn">
+            <div className="flex items-start gap-3">
+              <div className="w-9 h-9 rounded-full bg-emerald-500/10 flex items-center justify-center shrink-0 mt-0.5">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 text-emerald-500">
+                  <path fillRule="evenodd" d="M10 2a6 6 0 0 0-6 6c0 1.887-.454 3.665-1.257 5.234a.75.75 0 0 0 .515 1.076 32.91 32.91 0 0 0 3.256.508 3.5 3.5 0 0 0 6.972 0 32.903 32.903 0 0 0 3.256-.508.75.75 0 0 0 .515-1.076A11.448 11.448 0 0 1 16 8a6 6 0 0 0-6-6ZM8.05 14.943a33.54 33.54 0 0 0 3.9 0 2 2 0 0 1-3.9 0Z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-emerald-400">Activa las alertas</p>
+                <p className="text-xs text-zinc-400 mt-0.5">Te avisamos cuando entres a la app si te falta completar habitos</p>
+                <button
+                  onClick={() => navigate('/notificaciones')}
+                  className="mt-2 text-xs font-bold text-emerald-500 uppercase tracking-wider hover:text-emerald-400 transition-colors"
+                >
+                  Configurar
+                </button>
+              </div>
+              <button
+                onClick={dismissNotifBanner}
+                className="text-zinc-600 hover:text-zinc-400 transition-colors shrink-0"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                  <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />
+                </svg>
+              </button>
+            </div>
+          </section>
+        )}
+
         {/* ============================
             Ranking de la ronda actual
         ============================ */}
