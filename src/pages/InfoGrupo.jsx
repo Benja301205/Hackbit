@@ -152,30 +152,30 @@ export default function InfoGrupo() {
     <div className="min-h-screen pb-20">
       <div className="px-6 pt-8 pb-4">
         <h1 className="text-2xl font-bold">{grupo.name}</h1>
-        <p className="text-gray-400 text-sm mt-1">
+        <p className="text-zinc-500 text-sm mt-1">
           {grupo.period === 'weekly' ? 'Rondas semanales' : 'Rondas mensuales'}
         </p>
       </div>
 
       <div className="px-4 space-y-4">
         {/* Código de invitación */}
-        <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 text-center">
-          <p className="text-xs text-gray-400 uppercase tracking-wide mb-2">
+        <section className="glass-card p-5 text-center">
+          <p className="text-[10px] text-zinc-500 uppercase tracking-[0.2em] font-bold mb-2">
             Código de invitación
           </p>
-          <p className="text-3xl font-mono font-bold tracking-[0.3em] text-emerald-600 mb-4">
+          <p className="text-3xl font-mono font-bold tracking-[0.3em] text-emerald-500 drop-shadow-[0_0_15px_rgba(16,185,129,0.5)] mb-4">
             {grupo.invite_code}
           </p>
           <div className="flex gap-2">
             <button
               onClick={copiarCodigo}
-              className={`flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-xl text-sm font-medium transition-colors ${copiado ? 'animate-success' : ''}`}
+              className={`flex-1 py-2.5 bg-zinc-900/50 hover:bg-zinc-800 border border-white/10 rounded-xl text-sm font-medium text-white transition-colors ${copiado ? 'animate-success' : ''}`}
             >
               {copiado ? '¡Copiado!' : 'Copiar código'}
             </button>
             <button
               onClick={compartirLink}
-              className="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 rounded-xl text-sm font-medium transition-colors"
+              className="flex-1 py-2.5 bg-zinc-900/50 hover:bg-zinc-800 border border-white/10 rounded-xl text-sm font-medium text-white transition-colors"
             >
               Compartir link
             </button>
@@ -183,15 +183,15 @@ export default function InfoGrupo() {
         </section>
 
         {/* Hábitos */}
-        <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
+        <section className="glass-card p-4">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+            <h2 className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em]">
               Hábitos
             </h2>
             {esCreador && (
               <button
                 onClick={() => navigate('/editar-grupo')}
-                className="text-emerald-600 text-sm font-medium"
+                className="text-emerald-500 text-sm font-medium"
               >
                 Editar
               </button>
@@ -201,11 +201,11 @@ export default function InfoGrupo() {
             {habitos.map((h, index) => (
               <div
                 key={h.id}
-                className="flex items-center justify-between bg-gray-50 rounded-lg px-3 py-2.5 stagger-item"
+                className="flex items-center justify-between bg-zinc-900/50 border border-white/5 rounded-xl px-4 py-3 stagger-item"
                 style={{ '--i': index }}
               >
-                <span className="text-sm font-medium">{h.name}</span>
-                <span className="text-xs text-gray-500 bg-gray-200 rounded-full px-2 py-0.5">
+                <span className="text-sm font-medium text-zinc-200">{h.name}</span>
+                <span className="text-[10px] text-zinc-400 bg-white/5 border border-white/5 rounded-lg px-2 py-1 uppercase tracking-wider font-bold">
                   Nv.{h.level} · {PUNTOS_POR_NIVEL[h.level]}pts
                 </span>
               </div>
@@ -214,43 +214,43 @@ export default function InfoGrupo() {
         </section>
 
         {/* Premios */}
-        <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 space-y-3">
-          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+        <section className="glass-card p-4 space-y-3">
+          <h2 className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em]">
             Premios
           </h2>
           <div>
-            <p className="text-xs text-gray-400">Premio por ronda</p>
-            <p className="text-sm font-medium">{grupo.prize}</p>
+            <p className="text-[10px] text-zinc-500 uppercase tracking-wider font-bold">Premio por ronda</p>
+            <p className="text-sm font-medium text-white">{grupo.prize}</p>
           </div>
           {grupo.annual_prize && (
             <div>
-              <p className="text-xs text-gray-400">Premio anual</p>
-              <p className="text-sm font-medium">{grupo.annual_prize}</p>
+              <p className="text-[10px] text-zinc-500 uppercase tracking-wider font-bold">Premio anual</p>
+              <p className="text-sm font-medium text-amber-100">{grupo.annual_prize}</p>
             </div>
           )}
         </section>
 
         {/* Miembros */}
-        <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
-          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">
+        <section className="glass-card p-4">
+          <h2 className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em] mb-3">
             Miembros ({miembros.length})
           </h2>
           <div className="space-y-2">
             {miembros.map((m, index) => (
               <div
                 key={m.id}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl stagger-item ${
-                  m.id === user.id ? 'bg-emerald-50' : 'bg-gray-50'
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl stagger-item ${
+                  m.id === user.id ? 'bg-emerald-500/10 border border-emerald-500/20' : 'bg-zinc-900/50 border border-white/5'
                 }`}
                 style={{ '--i': index }}
               >
-                <div className="w-8 h-8 bg-emerald-200 text-emerald-700 rounded-full flex items-center justify-center text-sm font-bold">
+                <div className="w-8 h-8 bg-emerald-500/20 text-emerald-500 rounded-full flex items-center justify-center text-sm font-bold">
                   {m.nickname.charAt(0).toUpperCase()}
                 </div>
-                <span className="text-sm font-medium">
+                <span className="text-sm font-medium text-white">
                   {m.nickname}
                   {m.id === user.id && (
-                    <span className="text-gray-400 font-normal"> (vos)</span>
+                    <span className="text-zinc-500 font-normal"> (vos)</span>
                   )}
                 </span>
               </div>
@@ -262,14 +262,14 @@ export default function InfoGrupo() {
         <section className="space-y-3 pb-4">
           <button
             onClick={() => setModalSalir(true)}
-            className="w-full py-3 bg-white border-2 border-gray-200 hover:border-gray-300 text-gray-600 font-medium rounded-2xl transition-colors text-sm"
+            className="w-full py-3 bg-transparent hover:bg-white/5 border border-zinc-700 hover:border-zinc-600 text-zinc-400 hover:text-white font-medium rounded-2xl transition-colors text-sm"
           >
             Salir del grupo
           </button>
           {esCreador && (
             <button
               onClick={() => setModalEliminar(true)}
-              className="w-full py-3 bg-red-50 hover:bg-red-100 border-2 border-red-200 text-red-600 font-medium rounded-2xl transition-colors text-sm"
+              className="w-full py-3 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-500 font-medium rounded-2xl transition-colors text-sm"
             >
               Eliminar grupo
             </button>
@@ -280,23 +280,23 @@ export default function InfoGrupo() {
       {/* Modal eliminar grupo */}
       {modalEliminar && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-6 modal-overlay">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-sm modal-enter">
-            <h3 className="text-lg font-bold mb-2">Eliminar grupo</h3>
-            <p className="text-gray-500 text-sm mb-6">
+          <div className="glass-card p-6 w-full max-w-sm modal-enter border-red-500/20">
+            <h3 className="text-lg font-bold text-white mb-2">Eliminar grupo</h3>
+            <p className="text-zinc-400 text-sm mb-6">
               ¿Estás seguro? Se perderán todos los datos del grupo, incluyendo hábitos, fotos y ranking.
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => setModalEliminar(false)}
                 disabled={procesando}
-                className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium rounded-xl transition-colors"
+                className="flex-1 py-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-medium rounded-xl transition-colors"
               >
                 Cancelar
               </button>
               <button
                 onClick={handleEliminarGrupo}
                 disabled={procesando}
-                className="flex-1 py-3 bg-red-500 hover:bg-red-600 disabled:bg-gray-300 text-white font-medium rounded-xl transition-colors"
+                className="flex-1 py-3 bg-red-500 hover:bg-red-600 disabled:bg-zinc-700 text-white font-medium rounded-xl transition-colors"
               >
                 {procesando ? 'Eliminando...' : 'Eliminar'}
               </button>
@@ -308,9 +308,9 @@ export default function InfoGrupo() {
       {/* Modal salir del grupo */}
       {modalSalir && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-6 modal-overlay">
-          <div className="bg-white rounded-2xl p-6 w-full max-w-sm modal-enter">
-            <h3 className="text-lg font-bold mb-2">Salir del grupo</h3>
-            <p className="text-gray-500 text-sm mb-6">
+          <div className="glass-card p-6 w-full max-w-sm modal-enter">
+            <h3 className="text-lg font-bold text-white mb-2">Salir del grupo</h3>
+            <p className="text-zinc-400 text-sm mb-6">
               ¿Estás seguro que querés salir del grupo?
               {esCreador && ' Como sos el creador, la propiedad se transferirá a otro miembro.'}
             </p>
@@ -318,14 +318,14 @@ export default function InfoGrupo() {
               <button
                 onClick={() => setModalSalir(false)}
                 disabled={procesando}
-                className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium rounded-xl transition-colors"
+                className="flex-1 py-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-medium rounded-xl transition-colors"
               >
                 Cancelar
               </button>
               <button
                 onClick={handleSalirGrupo}
                 disabled={procesando}
-                className="flex-1 py-3 bg-red-500 hover:bg-red-600 disabled:bg-gray-300 text-white font-medium rounded-xl transition-colors"
+                className="flex-1 py-3 bg-red-500 hover:bg-red-600 disabled:bg-zinc-700 text-white font-medium rounded-xl transition-colors"
               >
                 {procesando ? 'Saliendo...' : 'Salir'}
               </button>

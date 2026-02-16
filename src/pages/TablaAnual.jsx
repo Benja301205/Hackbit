@@ -104,24 +104,24 @@ export default function TablaAnual() {
     <div className="min-h-screen pb-20">
       <div className="px-6 pt-8 pb-4">
         <h1 className="text-2xl font-bold">Tabla Anual {anioActual}</h1>
-        <p className="text-gray-400 text-sm mt-1">
+        <p className="text-zinc-500 text-sm mt-1">
           Puntos acumulados de todas las rondas del año
         </p>
       </div>
 
       <div className="px-4">
         {ranking.length === 0 ? (
-          <p className="text-gray-400 text-sm py-8 text-center">
+          <p className="text-zinc-500 text-sm py-8 text-center">
             No hay datos todavía
           </p>
         ) : (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="glass-card overflow-hidden">
             {/* Encabezado de tabla */}
-            <div className="grid grid-cols-[2.5rem_1fr_5rem_4.5rem] gap-2 px-4 py-3 bg-gray-50 border-b border-gray-100">
-              <span className="text-xs font-semibold text-gray-400 uppercase">#</span>
-              <span className="text-xs font-semibold text-gray-400 uppercase">Apodo</span>
-              <span className="text-xs font-semibold text-gray-400 uppercase text-right">Puntos</span>
-              <span className="text-xs font-semibold text-gray-400 uppercase text-right">Rondas</span>
+            <div className="grid grid-cols-[2.5rem_1fr_5rem_4.5rem] gap-2 px-4 py-3 bg-white/5 border-b border-white/5">
+              <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em]">#</span>
+              <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em]">Apodo</span>
+              <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em] text-right">Puntos</span>
+              <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em] text-right">Rondas</span>
             </div>
 
             {/* Filas */}
@@ -131,34 +131,34 @@ export default function TablaAnual() {
               return (
                 <div
                   key={item.id}
-                  className={`grid grid-cols-[2.5rem_1fr_5rem_4.5rem] gap-2 px-4 py-3 items-center border-b border-gray-50 last:border-b-0 stagger-item ${
-                    esMio ? 'bg-emerald-50' : ''
+                  className={`grid grid-cols-[2.5rem_1fr_5rem_4.5rem] gap-2 px-4 py-3 items-center border-b border-white/5 last:border-b-0 stagger-item ${
+                    esMio ? 'bg-emerald-500/10 border border-emerald-500/20' : ''
                   }`}
                   style={{ '--i': index }}
                 >
                   <span
                     className={`w-7 h-7 flex items-center justify-center rounded-full text-sm font-bold ${
                       esPrimero
-                        ? 'bg-emerald-500 text-white'
-                        : 'bg-gray-200 text-gray-600'
+                        ? 'bg-emerald-500 text-black shadow-[0_0_10px_rgba(16,185,129,0.4)]'
+                        : 'bg-zinc-800 text-zinc-400'
                     }`}
                   >
                     {index + 1}
                   </span>
-                  <span className="text-sm font-medium truncate">
+                  <span className="text-sm font-medium text-white truncate">
                     {item.nickname}
                     {esMio && (
-                      <span className="text-gray-400 font-normal"> (vos)</span>
+                      <span className="text-zinc-500 font-normal"> (vos)</span>
                     )}
                   </span>
                   <span
                     className={`text-sm font-bold text-right ${
-                      esPrimero ? 'text-emerald-600' : 'text-gray-700'
+                      esPrimero ? 'text-emerald-400' : 'text-zinc-200'
                     }`}
                   >
                     {item.puntos}
                   </span>
-                  <span className="text-sm text-gray-500 text-right">
+                  <span className="text-sm text-zinc-500 text-right">
                     {item.rondasGanadas} {item.rondasGanadas === 1 ? 'ganada' : 'ganadas'}
                   </span>
                 </div>
@@ -169,11 +169,11 @@ export default function TablaAnual() {
 
         {/* Premio anual */}
         {user.groups?.annual_prize && (
-          <div className="mt-4 bg-amber-50 border border-amber-200 rounded-xl p-4 text-center">
-            <p className="text-xs text-amber-600 uppercase tracking-wide mb-1">
+          <div className="mt-4 bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 text-center">
+            <p className="text-xs text-amber-500 uppercase tracking-wide mb-1">
               Premio anual
             </p>
-            <p className="text-sm font-medium text-amber-800">
+            <p className="text-sm font-medium text-amber-100">
               {user.groups.annual_prize}
             </p>
           </div>
