@@ -168,7 +168,7 @@ export default function Actividad() {
                   <button
                     key={completion.id}
                     onClick={() => setSelectedCompletion(completion)}
-                    className="aspect-square bg-gray-100 rounded-xl overflow-hidden shadow-sm active:scale-95 transition-transform stagger-item"
+                    className="relative aspect-square bg-gray-100 rounded-xl overflow-hidden shadow-sm active:scale-95 transition-transform stagger-item"
                     style={{ '--i': Math.min(i, 8) }}
                   >
                     <img
@@ -176,6 +176,11 @@ export default function Actividad() {
                       alt={completion.habits?.name}
                       className="w-full h-full object-cover photo-reveal"
                     />
+                    {completion.habits?.name && (
+                      <div className="absolute bottom-2 left-2 px-2 py-1 max-w-[85%] bg-black/55 backdrop-blur border border-white/10 rounded-full z-10">
+                        <span className="text-xs text-white font-medium truncate block">{completion.habits.name}</span>
+                      </div>
+                    )}
                   </button>
                 ))}
               </div>
@@ -277,7 +282,7 @@ export default function Actividad() {
                           placeholder="¿Por qué objetás esta foto?"
                           rows={3}
                           autoFocus
-                          className="w-full p-3 border-2 border-gray-200 rounded-xl text-sm focus:border-red-400 focus:outline-none resize-none"
+                          className="w-full p-3 bg-white text-gray-900 border-2 border-gray-200 rounded-xl text-sm placeholder:text-gray-400 caret-emerald-500 focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none resize-none selection:bg-emerald-500/25 selection:text-gray-900"
                         />
                         <div className="flex gap-2">
                           <button

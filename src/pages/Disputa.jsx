@@ -191,7 +191,7 @@ export default function Disputa() {
               onChange={(e) => setDefensa(e.target.value)}
               placeholder="Explicá por qué tu foto es válida..."
               rows={3}
-              className="w-full p-3 border-2 border-gray-200 rounded-xl text-sm focus:border-blue-400 focus:outline-none resize-none mb-3"
+              className="w-full p-3 bg-white text-gray-900 border-2 border-gray-200 rounded-xl text-sm placeholder:text-gray-400 caret-emerald-500 focus:border-emerald-500/40 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none resize-none mb-3"
             />
             <button
               onClick={enviarDefensa}
