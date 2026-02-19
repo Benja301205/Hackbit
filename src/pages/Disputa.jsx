@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useSession } from '../hooks/useSession'
 import { supabase } from '../lib/supabase'
 import { PUNTOS_POR_NIVEL } from '../lib/utils'
+import { sendPushNotification } from '../lib/push'
 
 export default function Disputa() {
   const { disputaId } = useParams()
@@ -65,6 +66,12 @@ export default function Disputa() {
       console.error('Error enviando defensa:', err)
     } else {
       setDisputa((prev) => ({ ...prev, defense_text: defensa.trim() }))
+      // Notificar al objetante que hay defensa esperando
+      await sendPushNotification(
+        [disputa.disputed_by],
+        'Hackbit',
+        `${completion?.users?.nickname} se defendió — tomá una decisión`
+      )
     }
     setEnviando(false)
   }
@@ -92,6 +99,11 @@ export default function Disputa() {
           .update({ status: 'approved' })
           .eq('id', disputa.completion_id)
       }
+      // Notificar al acusado con el resultado
+      const msg = resolution === 'accepted'
+        ? `${disputa.users?.nickname} aceptó tu defensa ✅`
+        : `${disputa.users?.nickname} rechazó tu defensa ❌`
+      await sendPushNotification([completion.user_id], 'Hackbit', msg)
       setDisputa((prev) => ({ ...prev, resolution, resolved_at: new Date().toISOString() }))
     } else {
       setError('No se pudo resolver la disputa. Intentá de nuevo.')

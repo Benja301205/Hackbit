@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useSession } from '../hooks/useSession'
 import { supabase } from '../lib/supabase'
 import { PUNTOS_POR_NIVEL } from '../lib/utils'
+import { sendPushNotification } from '../lib/push'
 import BottomNav from '../components/BottomNav'
 
 export default function Actividad() {
@@ -99,6 +100,11 @@ export default function Actividad() {
         .from('completions')
         .update({ status: 'disputed' })
         .eq('id', completionId)
+      // Notificar al dueño de la foto
+      const comp = completions.find((c) => c.id === completionId)
+      if (comp) {
+        await sendPushNotification([comp.user_id], 'Hackbit', `${user.nickname} cuestionó tu evidencia 👀`)
+      }
     }
 
     setObjetando(null)

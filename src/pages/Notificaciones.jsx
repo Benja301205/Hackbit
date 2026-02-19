@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useSession } from '../hooks/useSession'
+import { usePushNotifications } from '../hooks/usePushNotifications'
 import BottomNav from '../components/BottomNav'
 
 const STORAGE_KEY = 'hackbit_notif_settings'
@@ -53,6 +55,7 @@ function Toggle({ checked, onChange, label, description }) {
 
 export default function Notificaciones() {
   const navigate = useNavigate()
+  const { user } = useSession()
   const [settings, setSettings] = useState(getSettings)
   const [permiso, setPermiso] = useState('default')
   const [testSent, setTestSent] = useState(false)
@@ -60,6 +63,8 @@ export default function Notificaciones() {
     window.matchMedia('(display-mode: standalone)').matches ||
     window.navigator.standalone === true
   )
+  const { isSupported: isPushSupported, isSubscribed, subscribe, unsubscribe, loading: pushLoading } =
+    usePushNotifications(user?.id)
 
   useEffect(() => {
     if ('Notification' in window) {
@@ -270,10 +275,60 @@ export default function Notificaciones() {
           </div>
         </section>
 
+        {/* Push web en tiempo real */}
+        {isPushSupported && (
+          <section className="glass-card p-5">
+            <h2 className="text-[10px] font-bold text-zinc-500 uppercase tracking-[0.2em] mb-4">
+              Notificaciones en tiempo real
+            </h2>
+
+            {isSubscribed ? (
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 text-emerald-500">
+                      <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-emerald-400">Push activado</p>
+                    <p className="text-xs text-zinc-500">Recibis alertas aunque la app esté cerrada</p>
+                  </div>
+                </div>
+                <button
+                  onClick={unsubscribe}
+                  disabled={pushLoading}
+                  className="w-full py-2.5 text-sm font-medium text-zinc-500 bg-zinc-800/50 hover:bg-zinc-700/50 rounded-2xl border border-white/5 transition-colors disabled:opacity-50"
+                >
+                  {pushLoading ? 'Desactivando...' : 'Desactivar'}
+                </button>
+              </div>
+            ) : (
+              <div>
+                <p className="text-xs text-zinc-400 mb-4 leading-relaxed">
+                  Activá las notificaciones para no romper la racha del grupo — te avisamos cuando alguien sube una foto, objeta la tuya, o resuelve una disputa.
+                </p>
+                <button
+                  onClick={subscribe}
+                  disabled={pushLoading || permiso === 'denied'}
+                  className="btn-aesthetic w-full py-3 text-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {pushLoading ? 'Activando...' : 'Activar notificaciones push'}
+                </button>
+                {permiso === 'denied' && (
+                  <p className="text-xs text-red-400 mt-2 text-center">
+                    El navegador bloqueó los permisos. Activalos desde los ajustes del sistema.
+                  </p>
+                )}
+              </div>
+            )}
+          </section>
+        )}
+
         {/* Info card */}
         <section className="glass-card p-5 opacity-60">
           <p className="text-xs text-zinc-400 leading-relaxed">
-            Las notificaciones se evaluan cada vez que abris la app. No usamos notificaciones push del servidor, asi que solo te avisamos cuando entras a Hackbit.
+            Las alertas de la app (ranking, habitos) se evaluan cuando abrís Hackbit. Las notificaciones push llegan aunque tengas la app cerrada.
           </p>
         </section>
       </div>
