@@ -40,6 +40,20 @@ self.addEventListener('fetch', (event) => {
   )
 })
 
+// Handle push events (web push notifications from server)
+self.addEventListener('push', (event) => {
+  if (!event.data) return
+  const { title, body } = event.data.json()
+  event.waitUntil(
+    self.registration.showNotification(title, {
+      body,
+      icon: '/icons/icon-192.png',
+      badge: '/icons/icon-192.png',
+      vibrate: [100, 50, 100],
+    })
+  )
+})
+
 // Handle notification clicks
 self.addEventListener('notificationclick', (event) => {
   event.notification.close()

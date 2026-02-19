@@ -4,6 +4,7 @@ import { useSession } from '../hooks/useSession'
 import { supabase } from '../lib/supabase'
 import { applyStamp } from '../lib/stamp'
 import { PUNTOS_POR_NIVEL, formatDate } from '../lib/utils'
+import { sendPushNotification } from '../lib/push'
 import stampUrl from '../assets/hackbit_stamp.png'
 
 export default function CompletarHabito() {
@@ -115,6 +116,15 @@ export default function CompletarHabito() {
         })
 
       if (insertErr) throw insertErr
+
+      // Notificar al resto del grupo
+      const { data: companeros } = await supabase
+        .from('users')
+        .select('id')
+        .eq('group_id', user.group_id)
+        .neq('id', user.id)
+      const ids = (companeros || []).map((u) => u.id)
+      await sendPushNotification(ids, 'Hackbit', `${user.nickname} subió su prueba de hoy 📸`)
 
       navigate('/dashboard', { replace: true })
     } catch (err) {
